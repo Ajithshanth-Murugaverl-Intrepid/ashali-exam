@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 const EXAM_DATE = "2026-08-10T08:00:00+05:30";
@@ -192,17 +193,36 @@ export default function Home() {
 
       <main className="app-shell">
         <section className="card reveal hero">
-          <p className="greeting">
-            {greeting}, Ashali
-          </p>
-          <h1>🎓 Ashali&apos;s A/L 2026 Mission</h1>
-          <p className="tagline">&quot;Today&apos;s effort is tomorrow&apos;s success.&quot;</p>
-          <p className="encouragement">
-            Ashali, every study session brings you closer to your dream. Stay focused, trust the process, and make
-            yourself proud. ❤️
-            {"\n\n"}
-            {getEncouragement(countdown.days)}
-          </p>
+          <div className="hero-layout">
+            <div>
+              <p className="greeting">
+                {greeting}, Ashali
+              </p>
+              <h1>🎓 Ashali&apos;s A/L 2026 Mission</h1>
+              <p className="tagline">&quot;Today&apos;s effort is tomorrow&apos;s success.&quot;</p>
+              <p className="encouragement">
+                Ashali, every study session brings you closer to your dream. Stay focused, trust the process, and make
+                yourself proud. ❤️
+                {"\n\n"}
+                {getEncouragement(countdown.days)}
+              </p>
+            </div>
+
+            <figure className="hero-photo-wrap">
+              <div className="hero-photo-frame">
+                <Image
+                  src="/ashali.png"
+                  alt="Ashali visualized as a future doctor"
+                  width={620}
+                  height={760}
+                  priority
+                  className="hero-photo"
+                  style={{ borderRadius: "25px" }}
+                />
+              </div>
+              <figcaption className="hero-photo-caption">Future Dr. Ashali</figcaption>
+            </figure>
+          </div>
         </section>
 
         <section className="card reveal countdown">
@@ -325,13 +345,16 @@ export default function Home() {
           </div>
           <p className="career-percent">{careerProgress}%</p>
         </section>
+
+        <div className="mobile-end-spacer" aria-hidden="true" />
       </main>
 
       <style jsx>{`
         .page-wrap {
-          min-height: 100vh;
+          min-height: 100dvh;
           position: relative;
-          overflow: hidden;
+          overflow-x: hidden;
+          overflow-y: visible;
           color: #f3f2ff;
           background:
             radial-gradient(circle at 10% 0%, rgba(127, 91, 255, 0.25) 0%, rgba(127, 91, 255, 0) 45%),
@@ -400,9 +423,13 @@ export default function Home() {
           z-index: 2;
           width: min(100%, 1100px);
           margin: 0 auto;
-          padding: 18px 14px 48px;
+          padding: 18px 14px calc(150px + env(safe-area-inset-bottom));
           display: grid;
           gap: 14px;
+        }
+
+        .mobile-end-spacer {
+          height: calc(64px + env(safe-area-inset-bottom));
         }
 
         .card {
@@ -468,6 +495,11 @@ export default function Home() {
           padding-top: 24px;
         }
 
+        .hero-layout {
+          display: grid;
+          gap: 14px;
+        }
+
         h1 {
           font-size: clamp(1.35rem, 6vw, 2.4rem);
           letter-spacing: -0.02em;
@@ -498,6 +530,35 @@ export default function Home() {
           border: 1px solid rgba(255, 255, 255, 0.2);
           line-height: 1.6;
           white-space: pre-line;
+        }
+
+        .hero-photo-wrap {
+          margin: 0;
+          display: grid;
+          gap: 8px;
+        }
+
+        .hero-photo-frame {
+          border-radius: 25px !important;
+          padding: 6px;
+          background: linear-gradient(135deg, rgba(127, 91, 255, 0.75), rgba(59, 130, 255, 0.6), rgba(255, 121, 199, 0.5));
+          box-shadow: 0 18px 28px rgba(9, 13, 32, 0.5);
+          overflow: hidden;
+        }
+
+        .hero-photo {
+          width: 100%;
+          height: auto;
+          display: block;
+          border-radius: 25px !important;
+          object-fit: cover;
+          max-height: 340px;
+        }
+
+        .hero-photo-caption {
+          font-size: 0.82rem;
+          color: #cfd5fb;
+          letter-spacing: 0.02em;
         }
 
         .section-title-wrap {
@@ -710,8 +771,21 @@ export default function Home() {
 
         @media (min-width: 720px) {
           .app-shell {
-            padding: 30px 24px 70px;
+            padding: 30px 24px calc(130px + env(safe-area-inset-bottom));
             gap: 16px;
+          }
+
+          .hero-layout {
+            grid-template-columns: 1.35fr 0.9fr;
+            align-items: start;
+          }
+
+          .hero-photo {
+            max-height: 420px;
+          }
+
+          .mobile-end-spacer {
+            height: 20px;
           }
 
           .card {
