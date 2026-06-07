@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import BiologyMcq from "./components/BiologyMcq";
+import ChemistryMcq from "./components/ChemistryMcq";
+import PhysicsMcq from "./components/PhysicsMcq";
 
 const EXAM_DATE = "2026-08-10T08:00:00+05:30";
 const PREPARATION_START = "2025-01-01T00:00:00+05:30";
@@ -332,6 +335,18 @@ export default function Home() {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="card reveal">
+          <div className="section-title-wrap">
+            <h2>📖 பாட MCQ பயிற்சி</h2>
+            <p className="section-subtitle">உயிரியல், வேதியியல் & இயற்பியல் — தொகுதி வாரியாக கேள்விகள்</p>
+          </div>
+          <div className="subjects-grid">
+            <BiologyMcq />
+            <ChemistryMcq />
+            <PhysicsMcq />
           </div>
         </section>
 
@@ -731,6 +746,11 @@ export default function Home() {
           gap: 12px;
         }
 
+        .subjects-grid {
+          display: grid;
+          gap: 12px;
+        }
+
         .career-percent {
           font-size: 1.1rem;
           text-align: right;
@@ -806,6 +826,10 @@ export default function Home() {
 
           .stats-grid {
             grid-template-columns: repeat(4, minmax(0, 1fr));
+          }
+
+          .subjects-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
           }
         }
       `}</style>
