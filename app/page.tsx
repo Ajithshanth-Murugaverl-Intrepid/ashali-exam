@@ -6,7 +6,7 @@ import BiologyMcq from "./components/BiologyMcq";
 import ChemistryMcq from "./components/ChemistryMcq";
 import PhysicsMcq from "./components/PhysicsMcq";
 
-const EXAM_DATE = "2026-08-10T08:00:00+05:30";
+const EXAM_DATE = "2026-08-10T13:00:00+05:30";
 const PREPARATION_START = "2025-01-01T00:00:00+05:30";
 const NUMBER_FORMAT = new Intl.NumberFormat("en-US");
 
@@ -30,6 +30,15 @@ const CHALLENGES = [
   "Run a 2-hour revision sprint: 50 min study + 10 min break x2.",
   "Memorize one key formula set and test recall after 2 hours.",
   "Finish one chapter recap before the end of the day."
+];
+
+const EXAM_TIMETABLE = [
+  { paper: "Biology I", date: "10 Aug (Mon)", time: "1:00 PM - 3:00 PM", startAt: "2026-08-10T13:00:00+05:30" },
+  { paper: "Biology II", date: "11 Aug (Tue)", time: "1:00 PM - 4:10 PM", startAt: "2026-08-11T13:00:00+05:30" },
+  { paper: "Physics I", date: "14 Aug (Fri)", time: "2:00 PM - 4:00 PM", startAt: "2026-08-14T14:00:00+05:30" },
+  { paper: "Physics II", date: "17 Aug (Mon)", time: "8:30 AM - 11:40 AM", startAt: "2026-08-17T08:30:00+05:30" },
+  { paper: "Chemistry I", date: "19 Aug (Wed)", time: "8:30 AM - 10:30 AM", startAt: "2026-08-19T08:30:00+05:30" },
+  { paper: "Chemistry II", date: "24 Aug (Mon)", time: "8:30 AM - 11:40 AM", startAt: "2026-08-24T08:30:00+05:30" }
 ];
 
 type ExamMarkEntry = {
@@ -77,6 +86,19 @@ type Countdown = {
 
 function pad(value: number) {
   return String(value).padStart(2, "0");
+}
+
+function getSmallCountdown(targetIso: string, nowMs: number) {
+  const remainingMs = new Date(targetIso).getTime() - nowMs;
+  if (remainingMs <= 0) return "Started";
+
+  const totalMinutes = Math.floor(remainingMs / 60000);
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return `${days}d ${hours}h ${minutes}m left`;
+  return `${hours}h ${minutes}m left`;
 }
 
 function getGreeting(hour: number) {
@@ -285,7 +307,7 @@ export default function Home() {
         <section className="card reveal countdown">
           <div className="section-title-wrap">
             <h2>Exam Countdown</h2>
-            <p className="section-subtitle">August 10, 2026 at 8:00 AM (Asia/Colombo)</p>
+            <p className="section-subtitle">August 10, 2026 at 1:00 PM (Asia/Colombo)</p>
           </div>
           <div className="timer-grid">
             <div className="timer-box">
@@ -304,6 +326,26 @@ export default function Home() {
               <span>{pad(countdown.seconds)}</span>
               <label>Seconds</label>
             </div>
+          </div>
+        </section>
+
+        <section className="card reveal timetable-card">
+          <div className="section-title-wrap">
+            <h2>🗓️ Exam Timetable</h2>
+            <p className="section-subtitle">Released schedule for 2026 A/L papers</p>
+          </div>
+          <div className="timetable-grid" role="list" aria-label="Exam timetable">
+            {EXAM_TIMETABLE.map((item, index) => (
+              <article key={item.paper} className="timetable-item" role="listitem">
+                <p className="timetable-index">Paper {index + 1}</p>
+                <p className="timetable-paper">{item.paper}</p>
+                <div className="timetable-meta">
+                  <p className="timetable-date">{item.date}</p>
+                  <p className="timetable-time">{item.time}</p>
+                </div>
+                <p className="timetable-countdown">⏳ {getSmallCountdown(item.startAt, now)}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -733,6 +775,77 @@ export default function Home() {
           text-transform: uppercase;
         }
 
+        .timetable-card {
+          display: grid;
+          gap: 12px;
+        }
+
+        .timetable-grid {
+          display: grid;
+          gap: 10px;
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .timetable-item {
+          display: grid;
+          gap: 8px;
+          padding: 12px;
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          background: rgba(255, 255, 255, 0.1);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .timetable-item p {
+          margin: 0;
+        }
+
+        .timetable-index {
+          font-size: 0.72rem;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          color: #b4bbd6;
+        }
+
+        .timetable-paper {
+          font-size: 1rem;
+          font-weight: 700;
+          color: #f3f2ff;
+        }
+
+        .timetable-date {
+          color: #d6fcff;
+          width: fit-content;
+          padding: 5px 10px;
+          border-radius: 999px;
+          border: 1px solid rgba(119, 242, 255, 0.32);
+          background: rgba(119, 242, 255, 0.12);
+          font-weight: 600;
+          font-size: 0.82rem;
+        }
+
+        .timetable-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .timetable-time {
+          margin: 0;
+          font-size: 0.8rem;
+          color: #cfd5fb;
+          font-weight: 600;
+        }
+
+        .timetable-countdown {
+          margin: 0;
+          font-size: 0.74rem;
+          color: #b4bbd6;
+          letter-spacing: 0.01em;
+        }
+
         .progress-track,
         .career-loader {
           width: 100%;
@@ -1104,6 +1217,12 @@ export default function Home() {
 
           .timer-grid {
             grid-template-columns: repeat(4, minmax(0, 1fr));
+          }
+
+          .timetable-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-rows: repeat(2, minmax(0, 1fr));
+            grid-auto-flow: column;
           }
 
           .split-layout {
