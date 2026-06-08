@@ -258,9 +258,9 @@ export default function Home() {
             <p className="section-subtitle">உயிரியல், இரசாயனவியல் & பெளதிகவியல் — தொகுதி வாரியாக கேள்விகள்</p>
           </div>
           <div className="subjects-grid">
+            <PhysicsMcq />
             <BiologyMcq />
             <ChemistryMcq />
-            <PhysicsMcq />
           </div>
         </section>
 

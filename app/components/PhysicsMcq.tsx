@@ -8,6 +8,12 @@ import { physicsBatch2ExamQuestions } from "./physicsBatch2ExamQuestions";
 import { physicsBatch3ExamQuestions } from "./physicsBatch3ExamQuestions";
 import { physicsBatch4ExamQuestions } from "./physicsBatch4ExamQuestions";
 import { physicsBatch5ExamQuestions } from "./physicsBatch5ExamQuestions";
+import { physicsBatch6ExamQuestions } from "./physicsBatch6ExamQuestions";
+import { physicsBatch7ExamQuestions } from "./physicsBatch7ExamQuestions";
+import { physicsBatch8ExamQuestions } from "./physicsBatch8ExamQuestions";
+import { physicsBatch9ExamQuestions } from "./physicsBatch9ExamQuestions";
+import { physicsBatch10ExamQuestions } from "./physicsBatch10ExamQuestions";
+import { physicsBatch11ExamQuestions } from "./physicsBatch11ExamQuestions";
 
 type RandomQuestion = ExamQuestion & {
   randomId: string;
@@ -78,52 +84,52 @@ const PHYSICS_BATCHES: Batch[] = [
     focus: "நிலைமின்புலம்: கூலோம் விதி, மின்புலச்செறிவு, அழுத்தம், கொள்ளளவிகள்",
     target: 50,
     durationSeconds: 7200,
-    examQuestions: []
+    examQuestions: physicsBatch6ExamQuestions
   },
   {
     id: "p7",
     label: "தொகுதி 7",
     units: "அலகு 7",
     focus: "காந்தப்புலம்: அசையும் மின்னேற்றங்கள், Biot-Savart, Ampere விதி, சுருள் மீதான திருப்புத்திறன்",
-    target: 45,
+    target: 50,
     durationSeconds: 7200,
-    examQuestions: []
+    examQuestions: physicsBatch7ExamQuestions
   },
   {
     id: "p8",
     label: "தொகுதி 8",
     units: "அலகு 8",
     focus: "ஓட்டமின்னியல்: Ohm விதி, e.m.f., Kirchhoff விதிகள், Wheatstone bridge, Potentiometer",
-    target: 60,
+    target: 50,
     durationSeconds: 7200,
-    examQuestions: []
+    examQuestions: physicsBatch8ExamQuestions
   },
   {
     id: "p9",
     label: "தொகுதி 9",
     units: "அலகு 9",
     focus: "இலத்திரனியல்: Diodes, Transistor, Op-Amp, Digital logic gates",
-    target: 60,
+    target: 50,
     durationSeconds: 7200,
-    examQuestions: []
+    examQuestions: physicsBatch9ExamQuestions
   },
   {
     id: "p10",
     label: "தொகுதி 10",
     units: "அலகு 10",
     focus: "பதார்த்தங்களின் இயந்திரவியல் இயல்புகள்: மீட்சித்தன்மை, பாகுத்தன்மை, மேற்பரப்பு இழுவை",
-    target: 45,
+    target: 50,
     durationSeconds: 7200,
-    examQuestions: []
+    examQuestions: physicsBatch10ExamQuestions
   },
   {
     id: "p11",
     label: "தொகுதி 11",
     units: "அலகு 11",
     focus: "பதார்த்தமும் கதிர்வீச்சும்: ஒளிமின் விளைவு, அணுக்கட்டமைப்பு, உட்கருப் பௌதிகவியல்",
-    target: 55,
+    target: 50,
     durationSeconds: 7200,
-    examQuestions: []
+    examQuestions: physicsBatch11ExamQuestions
   }
 ];
 
