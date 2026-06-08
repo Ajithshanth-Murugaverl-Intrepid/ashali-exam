@@ -191,7 +191,10 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
         {phase === "result" && (
           <div className="em-result-shell">
             <div className="em-result-hdr">
-              <h2 className="em-result-title">தேர்வு முடிவு</h2>
+              <div className="em-result-title-wrap">
+                <h2 className="em-result-title">தேர்வு முடிவு</h2>
+                {config.examCode && <p className="em-result-code">Exam Code: {config.examCode}</p>}
+              </div>
               <button className="em-x-btn em-x-btn-inline" type="button" onClick={onClose} aria-label="மூடு">
                 ✕ மூடு
               </button>
@@ -635,6 +638,20 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
           margin: 0;
           font-size: 1.2rem;
           font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        }
+
+        .em-result-title-wrap {
+          display: grid;
+          gap: 3px;
+          min-width: 0;
+        }
+
+        .em-result-code {
+          margin: 0;
+          font-size: 0.76rem;
+          color: #d4f1ff;
+          letter-spacing: 0.03em;
+          text-transform: uppercase;
         }
 
         .em-score-band {

@@ -176,6 +176,7 @@ export default function Home() {
         const total = exams.reduce((sum, exam) => sum + exam.mark, 0);
         const completedTotal = completedExams.reduce((sum, exam) => sum + exam.mark, 0);
         const completedMaxTotal = completedExams.reduce((sum, exam) => sum + exam.maxMark, 0);
+        const completionRate = exams.length > 0 ? (completedExams.length / exams.length) * 100 : 0;
         const averageOutOf100 = completedExams.length > 0
           ? completedExams.reduce((sum, exam) => sum + ((exam.mark / exam.maxMark) * 100), 0) / completedExams.length
           : 0;
@@ -186,6 +187,7 @@ export default function Home() {
           total,
           completedTotal,
           completedMaxTotal,
+          completionRate,
           averageOutOf100,
           completedExamsCount: completedExams.length,
           totalExamsCount: exams.length
@@ -334,26 +336,46 @@ export default function Home() {
         <section className="card reveal marks-status">
           <div className="section-title-wrap">
             <h2>📊 Current Marks Status</h2>
-            <p className="section-subtitle">Hardcoded exam marks with calculated totals and averages</p>
+            <p className="section-subtitle">Clean view of completion and performance for each subject</p>
           </div>
           <div className="marks-grid">
             {subjectMarksSummary.map((subject) => (
               <article key={subject.subject} className="marks-card">
                 <div className="marks-head">
-                  <h3>{subject.subject}</h3>
-                  <span>{subject.completedExamsCount}/{subject.totalExamsCount} completed</span>
+                  <div>
+                    <h3>{subject.subject}</h3>
+                    <p className="marks-head-subline">{subject.completedExamsCount}/{subject.totalExamsCount} papers completed</p>
+                  </div>
+                  <span className="subject-score-pill">{subject.averageOutOf100.toFixed(1)}%</span>
                 </div>
+
+                <div className="marks-progress-wrap">
+                  <div className="marks-progress-label-row">
+                    <p>Completion</p>
+                    <span>{subject.completionRate.toFixed(0)}%</span>
+                  </div>
+                  <div className="marks-progress-track">
+                    <div className="marks-progress-fill completion" style={{ width: `${subject.completionRate}%` }} />
+                  </div>
+                </div>
+
+                <div className="marks-progress-wrap">
+                  <div className="marks-progress-label-row">
+                    <p>Average Score</p>
+                    <span>{subject.averageOutOf100.toFixed(1)}%</span>
+                  </div>
+                  <div className="marks-progress-track">
+                    <div className="marks-progress-fill performance" style={{ width: `${subject.averageOutOf100}%` }} />
+                  </div>
+                </div>
+
                 <div className="marks-meta">
                   <p><strong>Total:</strong> {subject.total}</p>
-                  <p>
-                    <strong>Average:</strong>
-                    <span className="average-chip">{subject.averageOutOf100.toFixed(2)}</span>
-                  </p>
                 </div>
                 <p className="marks-subline">Completed total: {subject.completedTotal}/{subject.completedMaxTotal || 0}</p>
                 <div className="marks-chips">
                   {subject.exams.map((exam) => (
-                    <span key={exam.examCode} className="mark-chip">
+                    <span key={exam.examCode} className={`mark-chip ${exam.mark > 0 ? "done" : "pending"}`}>
                       {exam.examCode}: {exam.mark}/{exam.maxMark}
                     </span>
                   ))}
@@ -861,20 +883,25 @@ export default function Home() {
         .marks-grid {
           display: grid;
           gap: 12px;
+          align-items: stretch;
+          grid-auto-rows: 1fr;
         }
 
         .marks-card {
           background: rgba(255, 255, 255, 0.12);
           border: 1px solid rgba(255, 255, 255, 0.2);
           border-radius: 18px;
-          padding: 14px;
-          display: grid;
-          gap: 10px;
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          height: 100%;
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
         .marks-head {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: space-between;
           gap: 10px;
         }
@@ -890,9 +917,72 @@ export default function Home() {
           font-size: 0.82rem;
         }
 
-        .marks-meta {
+        .marks-head-subline {
+          margin: 4px 0 0;
+          color: #b4bbd6;
+          font-size: 0.78rem;
+        }
+
+        .subject-score-pill {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 62px;
+          padding: 5px 11px;
+          border-radius: 999px;
+          color: #ffffff;
+          background: linear-gradient(95deg, rgba(127, 91, 255, 0.9), rgba(59, 130, 255, 0.9));
+          border: 1px solid rgba(255, 255, 255, 0.28);
+          font-size: 0.82rem;
+          font-weight: 700;
+          letter-spacing: 0.01em;
+        }
+
+        .marks-progress-wrap {
           display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 6px;
+        }
+
+        .marks-progress-label-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .marks-progress-label-row p,
+        .marks-progress-label-row span {
+          margin: 0;
+          font-size: 0.78rem;
+          color: #ccd1f2;
+        }
+
+        .marks-progress-track {
+          width: 100%;
+          height: 8px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          overflow: hidden;
+        }
+
+        .marks-progress-fill {
+          height: 100%;
+          border-radius: inherit;
+          transition: width 700ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .marks-progress-fill.completion {
+          background: linear-gradient(95deg, #22c55e, #84cc16);
+        }
+
+        .marks-progress-fill.performance {
+          background: linear-gradient(95deg, #7f5bff, #3b82ff);
+        }
+
+        .marks-meta {
+          display: flex;
+          align-items: center;
           gap: 8px;
         }
 
@@ -912,6 +1002,7 @@ export default function Home() {
           display: flex;
           flex-wrap: wrap;
           gap: 6px;
+          align-content: flex-start;
         }
 
         .mark-chip {
@@ -921,6 +1012,18 @@ export default function Home() {
           font-size: 0.76rem;
           color: #cfd5fb;
           background: rgba(127, 91, 255, 0.15);
+        }
+
+        .mark-chip.done {
+          background: rgba(34, 197, 94, 0.2);
+          border-color: rgba(134, 239, 172, 0.38);
+          color: #dcfce7;
+        }
+
+        .mark-chip.pending {
+          background: rgba(127, 91, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.22);
+          color: #cfd5fb;
         }
 
         .average-chip {
