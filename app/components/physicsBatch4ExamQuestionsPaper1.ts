@@ -26,9 +26,9 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p4-paper1-q4",
     q: "நிறைவொன்றிய வாயுச் சமன்பாடு PV = nRT இல் R இன் SI அலகு யாது?",
-    options: ["J K^-1", "J mol^-1 K^-1", "Pa m^3 K^-1", "cal mol^-1 K^-1"],
+    options: ["J K⁻¹", "J mol⁻¹ K⁻¹", "Pa m^3 K⁻¹", "cal mol⁻¹ K⁻¹"],
     answer: 1,
-    note: "R = PV/(nT) என்பதால் அலகு J mol^-1 K^-1."
+    note: "R = PV/(nT) என்பதால் அலகு J mol⁻¹ K⁻¹."
   },
   {
     id: "p4-paper1-q5",
@@ -61,9 +61,9 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p4-paper1-q9",
     q: "தன்வெப்பக் கொள்ளளவின் SI அலகு யாது?",
-    options: ["J kg^-1", "J K^-1", "J kg^-1 K^-1", "W m^-1 K^-1"],
+    options: ["J kg⁻¹", "J K⁻¹", "J kg⁻¹ K⁻¹", "W m⁻¹ K⁻¹"],
     answer: 2,
-    note: "c = Q/(mΔθ); அலகு J kg^-1 K^-1."
+    note: "c = Q/(mΔθ); அலகு J kg⁻¹ K⁻¹."
   },
   {
     id: "p4-paper1-q10",
@@ -82,9 +82,9 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p4-paper1-q12",
     q: "நீரின் உருகலின் மறைவெப்பம் தோராயமாக:",
-    options: ["2.26 x 10^6 J kg^-1", "3.36 x 10^5 J kg^-1", "4.2 x 10^3 J kg^-1", "1.0 x 10^3 J kg^-1"],
+    options: ["2.26 x 10^6 J kg⁻¹", "3.36 x 10^5 J kg⁻¹", "4.2 x 10^3 J kg⁻¹", "1.0 x 10^3 J kg⁻¹"],
     answer: 1,
-    note: "பனியின் உருகலின் தன்மறைவெப்பம் ≈ 3.36 x 10^5 J kg^-1."
+    note: "பனியின் உருகலின் தன்மறைவெப்பம் ≈ 3.36 x 10^5 J kg⁻¹."
   },
   {
     id: "p4-paper1-q13",
@@ -103,9 +103,9 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p4-paper1-q15",
     q: "வெப்பக் கடத்துதிறன் k இன் SI அலகு யாது?",
-    options: ["W m^-1 K^-1", "J m^-1 K^-1", "W m K^-1", "J kg^-1 K^-1"],
+    options: ["W m⁻¹ K⁻¹", "J m⁻¹ K⁻¹", "W m K⁻¹", "J kg⁻¹ K⁻¹"],
     answer: 0,
-    note: "Fourier சமன்பாட்டில் இருந்து k இன் அலகு W m^-1 K^-1."
+    note: "Fourier சமன்பாட்டில் இருந்து k இன் அலகு W m⁻¹ K⁻¹."
   },
   {
     id: "p4-paper1-q16",
@@ -159,7 +159,7 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p4-paper1-q23",
     q: "இசுடீபனின் விதிப்படி கரும்பொருள் கதிர்வீச்சு வீதம் E, T உடன்?",
-    options: ["T", "T^2", "T^3", "T^4"],
+    options: ["T", "T²", "T^3", "T^4"],
     answer: 3,
     note: "Stefan-Boltzmann சட்டம்: E = σT^4."
   },
@@ -315,7 +315,7 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
     q: "கீழே உள்ளவற்றுள் மிக உயர்ந்த தன்வெப்பக் கொள்ளளவு உடையது எது?",
     options: ["பாதரசம்", "செம்பு", "நீர்", "உரோமம்"],
     answer: 2,
-    note: "நீரின் c ≈ 4200 J kg^-1 K^-1; பல பொதுப் பொருட்களை விட உயர்வு."
+    note: "நீரின் c ≈ 4200 J kg⁻¹ K⁻¹; பல பொதுப் பொருட்களை விட உயர்வு."
   },
   {
     id: "p4-paper1-q46",
@@ -327,7 +327,7 @@ export const physicsBatch4ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p4-paper1-q47",
     q: "வாயு மூலக்கூறுகளின் rms வேகம் Crms எதற்கு நேர்விகிதம்?",
-    options: ["T", "T^2", "√T", "1/T"],
+    options: ["T", "T²", "√T", "1/T"],
     answer: 2,
     note: "Crms = √(3RT/M) ஆகவே Crms ∝ √T."
   },

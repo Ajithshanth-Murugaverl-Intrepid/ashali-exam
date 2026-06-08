@@ -6,6 +6,9 @@ import ExamModule, { type ExamQuestion } from "./ExamModule";
 import { physicsBatch1ExamQuestionsPaper1 } from "./physicsBatch1ExamQuestionsPaper1";
 import { physicsBatch2ExamQuestionsPaper1 } from "./physicsBatch2ExamQuestionsPaper1";
 import { physicsBatch3ExamQuestionsPaper1 } from "./physicsBatch3ExamQuestionsPaper1";
+import { physicsBatch3ExamQuestionsPaper2 } from "./physicsBatch3ExamQuestionsPaper2";
+import { physicsBatch3ExamQuestionsPaper3 } from "./physicsBatch3ExamQuestionsPaper3";
+import { physicsBatch3ExamQuestionsPaper4 } from "./physicsBatch3ExamQuestionsPaper4";
 import { physicsBatch4ExamQuestionsPaper1 } from "./physicsBatch4ExamQuestionsPaper1";
 import { physicsBatch5ExamQuestionsPaper1 } from "./physicsBatch5ExamQuestionsPaper1";
 import { physicsBatch6ExamQuestionsPaper1 } from "./physicsBatch6ExamQuestionsPaper1";
@@ -24,6 +27,7 @@ type RandomQuestion = ExamQuestion & {
 type BatchExam = {
   examCode: string;
   label: string;
+  focus?: string;
   target: number;
   durationSeconds: number;
   examQuestions: ExamQuestion[];
@@ -77,9 +81,34 @@ const PHYSICS_BATCHES: Batch[] = [
       {
         examCode: "PHY-B3-E1",
         label: "பரீட்சை 1",
+        focus: "எளிய இசை இயக்கம் (Simple Harmonic Motion - SHM)",
         target: 50,
         durationSeconds: 7200,
         examQuestions: physicsBatch3ExamQuestionsPaper1
+      },
+      {
+        examCode: "PHY-B3-E2",
+        label: "பரீட்சை 2",
+        focus: "பொது அலை இயக்கம் (General Wave Motion)",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch3ExamQuestionsPaper2
+      },
+      {
+        examCode: "PHY-B3-E3",
+        label: "பரீட்சை 3",
+        focus: "ஒலியலைகள் (Sound Waves)",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch3ExamQuestionsPaper3
+      },
+      {
+        examCode: "PHY-B3-E4",
+        label: "பரீட்சை 4",
+        focus: "ஒளியியல் மற்றும் அலை ஒளியியல் (Light & Wave Optics)",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch3ExamQuestionsPaper4
       }
     ]
   },
@@ -525,7 +554,7 @@ export default function PhysicsMcq() {
                           >
                             <span className="batch-label">{exam.label}</span>
                             <span className="batch-units">குறியீடு: {exam.examCode}</span>
-                            <span className="batch-focus">{selectedBatch.focus}</span>
+                            <span className="batch-focus">{exam.focus ?? selectedBatch.focus}</span>
                             <span className="batch-count">
                               {exam.examQuestions.length > 0
                                 ? `${exam.examQuestions.length} / ${exam.target} வினாக்கள்`
@@ -553,7 +582,7 @@ export default function PhysicsMcq() {
               title: `🔭 பெளதிகவியல் தேர்வு — ${batch.label} (${exam.label})`,
               examCode: exam.examCode,
               units: batch.units,
-              focus: batch.focus,
+              focus: exam.focus ?? batch.focus,
               durationSeconds: exam.durationSeconds,
               questions: exam.examQuestions
             }}

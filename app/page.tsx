@@ -43,6 +43,9 @@ const EXAM_MARK_ENTRIES: ExamMarkEntry[] = [
   { subject: "Physics", examCode: "PHY-B1-E1", maxMark: 50, mark: 38 },
   { subject: "Physics", examCode: "PHY-B2-E1", maxMark: 50, mark: 0 },
   { subject: "Physics", examCode: "PHY-B3-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B3-E2", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B3-E3", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B3-E4", maxMark: 50, mark: 0 },
   { subject: "Physics", examCode: "PHY-B4-E1", maxMark: 50, mark: 0 },
   { subject: "Physics", examCode: "PHY-B5-E1", maxMark: 50, mark: 0 },
   { subject: "Physics", examCode: "PHY-B6-E1", maxMark: 50, mark: 0 },
@@ -80,14 +83,6 @@ function getGreeting(hour: number) {
   if (hour >= 5 && hour < 12) return "Good Morning";
   if (hour >= 12 && hour < 17) return "Good Afternoon";
   return "Good Evening";
-}
-
-function getProgressCaption(progress: number) {
-  if (progress < 20) return "Mission launched. Build rhythm and consistency.";
-  if (progress < 45) return "Strong pace. Your daily discipline is paying off.";
-  if (progress < 70) return "Mid-mission mastery. Keep sharpening your weak areas.";
-  if (progress < 90) return "Final stretch energy. Revision intensity matters now.";
-  return "Exam-ready mode. Trust your preparation and stay calm.";
 }
 
 function getEncouragement(daysRemaining: number) {
@@ -154,9 +149,16 @@ export default function Home() {
 
   const prepTotal = Math.max(1, examMs - prepStartMs);
   const prepElapsed = Math.max(0, now - prepStartMs);
-  const prepProgress = Math.min(100, Math.max(0, (prepElapsed / prepTotal) * 100));
-  const roundedProgress = Math.round(prepProgress);
-  const careerProgress = Math.min(100, Math.round(roundedProgress * 0.94 + 6));
+  const prepTimelineProgress = Math.min(100, Math.max(0, (prepElapsed / prepTotal) * 100));
+  const roundedTimelineProgress = Math.round(prepTimelineProgress);
+
+  const completedExamsCount = EXAM_MARK_ENTRIES.filter((exam) => exam.mark > 0).length;
+  const totalExamsCount = EXAM_MARK_ENTRIES.length;
+  const examCompletionProgress = totalExamsCount > 0
+    ? Math.round((completedExamsCount / totalExamsCount) * 100)
+    : 0;
+
+  const careerProgress = Math.min(100, Math.round(roundedTimelineProgress * 0.94 + 6));
 
   const hourNow = new Date(now).getHours();
   const greeting = getGreeting(hourNow);
@@ -198,13 +200,13 @@ export default function Home() {
       icon: "🕊️",
       title: "Calm Starter",
       note: "You are taking the mission seriously.",
-      unlocked: roundedProgress > 1
+      unlocked: roundedTimelineProgress > 1
     },
     {
       icon: "🔥",
       title: "Momentum Builder",
       note: "Preparation progress reached 35%+.",
-      unlocked: roundedProgress >= 35
+      unlocked: roundedTimelineProgress >= 35
     },
     {
       icon: "🎯",
@@ -306,14 +308,14 @@ export default function Home() {
         <section className="card reveal progress-card">
           <div className="section-title-wrap">
             <h2>Preparation Progress</h2>
-            <p className="section-subtitle">Your mission timeline progress</p>
+            <p className="section-subtitle">Based on completed exam papers</p>
           </div>
-          <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={roundedProgress}>
-            <div className="progress-fill" style={{ width: `${roundedProgress}%` }} />
+          <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={examCompletionProgress}>
+            <div className="progress-fill" style={{ width: `${examCompletionProgress}%` }} />
           </div>
           <div className="progress-meta">
-            <span className="progress-percent">{roundedProgress}%</span>
-            <span className="progress-caption">{getProgressCaption(roundedProgress)}</span>
+            <span className="progress-percent">{examCompletionProgress}%</span>
+            <span className="progress-caption">{completedExamsCount}/{totalExamsCount} exams completed</span>
           </div>
         </section>
 
@@ -344,7 +346,7 @@ export default function Home() {
                 <div className="marks-meta">
                   <p><strong>Total:</strong> {subject.total}</p>
                   <p>
-                    <strong>Average(100):</strong>
+                    <strong>Average:</strong>
                     <span className="average-chip">{subject.averageOutOf100.toFixed(2)}</span>
                   </p>
                 </div>

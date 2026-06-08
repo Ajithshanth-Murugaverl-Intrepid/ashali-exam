@@ -91,14 +91,14 @@ export const physicsBatch8ExamQuestionsPaper1: ExamQuestion[] = [
     q: "ஒரு மின் சூடாக்கி 220\\text{ V}, 1100\\text{ W} என அடையாளப்படுத்தப்பட்டுள்ளது. அதன் சுருளின் தடை யாது?",
     options: ["22\\ \Omega", "44\\ \Omega", "55\\ \Omega", "11\\ \Omega", "440\\ \Omega"],
     answer: 1,
-    note: "பலம் P = \\frac{V^2}{R} \\implies R = \\frac{V^2}{P} = \\frac{220 \\times 220}{1100} = \\frac{48400}{1100} = 44\\ \Omega."
+    note: "பலம் P = \\frac{V²}{R} \\implies R = \\frac{V²}{P} = \\frac{220 \\times 220}{1100} = \\frac{48400}{1100} = 44\\ \Omega."
   },
   {
     id: "p8-paper1-q14",
     q: "10\\ \Omega தடையினூடாக 2\\text{ A} மின்னோட்டம் 5 நிமிடங்களுக்குப் பாயும்போது உருவாகும் வெப்பச் சக்தி யாது?",
     options: ["200 J", "1200 J", "12000 J", "6000 J", "24000 J"],
     answer: 2,
-    note: "ஜூலின் விதிப்படி, H = I^2 R t. இங்கு t = 5 \\times 60 = 300\\text{ s}. H = (2)^2 \\times 10 \\times 300 = 4 \\times 10 \\times 300 = 12000\\text{ J}."
+    note: "ஜூலின் விதிப்படி, H = I² R t. இங்கு t = 5 \\times 60 = 300\\text{ s}. H = (2)² \\times 10 \\times 300 = 4 \\times 10 \\times 300 = 12000\\text{ J}."
   },
   {
     id: "p8-paper1-q15",
@@ -131,7 +131,7 @@ export const physicsBatch8ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p8-paper1-q19",
     q: "ஒரு கடத்தியின் வழியே பாயும் மின்னோட்டம் I மற்றும் அதன் சுயாதீன இலத்திரன்களின் நகர்வு வேகம் (drift velocity) v ஆகியவற்றிற்கு இடையிலான தொடர்பு:",
-    options: ["I \\propto \\frac{1}{v}", "I \\propto v^2", "I \\propto v", "I ஆனது v இல் தங்கியிருக்காது", "I \\propto \\sqrt{v}"],
+    options: ["I \\propto \\frac{1}{v}", "I \\propto v²", "I \\propto v", "I ஆனது v இல் தங்கியிருக்காது", "I \\propto \\sqrt{v}"],
     answer: 2,
     note: "மின்னோட்டச் சமன்பாடு I = nAev ஆகும். இங்கு n, A, e மாறிலிகள் என்பதால், மின்னோட்டம் நகர்வு வேகத்திற்கு நேர்விகிதசமனாகும் (I \\propto v)."
   },
@@ -182,7 +182,7 @@ export const physicsBatch8ExamQuestionsPaper1: ExamQuestion[] = [
     q: "இரு கம்பிகள் A, B ஆகியவைகளின் நீளங்களின் விகிதம் 1:2 மற்றும் ஆரைகளின் விகிதம் 2:1 ஆகும். அவை ஒரே திரவியத்தால் ஆனவை எனின், அவற்றின் தடைகளின் விகிதம் (R_A : R_B) யாது?",
     options: ["1:2", "1:4", "1:8", "8:1", "4:1"],
     answer: 2,
-    note: "R = \\rho \\frac{l}{\\pi r^2} \\implies R \\propto \\frac{l}{r^2}. \\frac{R_A}{R_B} = \\left(\\frac{l_A}{l_B}\\right) \\times \\left(\\frac{r_B}{r_A}\\right)^2 = \\left(\\frac{1}{2}\\right) \\times \\left(\\frac{1}{2}\\right)^2 = \\frac{1}{2} \\times \\frac{1}{4} = \\frac{1}{8}."
+    note: "R = \\rho \\frac{l}{\\pi r²} \\implies R \\propto \\frac{l}{r²}. \\frac{R_A}{R_B} = \\left(\\frac{l_A}{l_B}\\right) \\times \\left(\\frac{r_B}{r_A}\\right)² = \\left(\\frac{1}{2}\\right) \\times \\left(\\frac{1}{2}\\right)² = \\frac{1}{2} \\times \\frac{1}{4} = \\frac{1}{8}."
   },
   {
     id: "p8-paper1-q27",
@@ -252,7 +252,7 @@ export const physicsBatch8ExamQuestionsPaper1: ExamQuestion[] = [
     q: "100\\text{ W, } 220\\text{ V} மற்றும் 60\\text{ W, } 220\\text{ V} என அடையாளப்படுத்தப்பட்ட இரு குமிழ்கள் தொடராக 220\\text{ V} மின்வழங்கலுடன் இணைக்கப்பட்டுள்ளன. பிரகாசமாக எரியும் குமிழ் எது?",
     options: ["100 W குமிழ்", "60 W குமிழ்", "இரு குமிழ்களும் சம பிரகாசத்துடன் எரியும்", "இரு குமிழ்களும் எரியாது", "குமிழ்களின் பிரகாசம் மாறி மாறி மாறும்"],
     answer: 1,
-    note: "R = \\frac{V^2}{P} என்பதால், 60\\text{ W} குமிழின் தடை அதிகம். தொடரிணைப்பில் இரு குமிழ்களினூடாகவும் ஒரே மின்னோட்டம் பாயும். P_{\\text{actual}} = I^2 R என்பதால், அதிக தடை கொண்ட 60\\text{ W} குமிழ் அதிக பலத்தை நுகர்ந்து பிரகாசமாக எரியும்."
+    note: "R = \\frac{V²}{P} என்பதால், 60\\text{ W} குமிழின் தடை அதிகம். தொடரிணைப்பில் இரு குமிழ்களினூடாகவும் ஒரே மின்னோட்டம் பாயும். P_{\\text{actual}} = I² R என்பதால், அதிக தடை கொண்ட 60\\text{ W} குமிழ் அதிக பலத்தை நுகர்ந்து பிரகாசமாக எரியும்."
   },
   {
     id: "p8-paper1-q37",

@@ -33,7 +33,7 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p7-paper1-q5",
     q: "நீளம் L உடைய நேரான கடத்தியொன்று I மின்னோட்டத்தைக் கொண்டு செல்லும் போது, காந்தப்புலம் B இற்குச் செங்குத்தாக வைக்கப்பட்டால் அதன் மீது தொழிற்படும் விசை:",
-    options: ["F = I L B", "F = \\frac{I L}{B}", "F = I^2 L B", "F = 0"],
+    options: ["F = I L B", "F = \\frac{I L}{B}", "F = I² L B", "F = 0"],
     answer: 0,
     note: "கடத்தியின் மீதான விசை F = I L B \\sin\\theta ஆகும். செங்குத்தாக உள்ளபோது \\theta = 90^\\circ என்பதால், விசை F = I L B ஆகும்."
   },
@@ -56,7 +56,7 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
     q: "வட்டப்பாதையில் இயங்கும் மின்னூட்டப்பட்ட துகளின் ஆரை (r) க்கான கோவை எது?",
     options: ["r = \\frac{m v}{q B}", "r = \\frac{q B}{m v}", "r = \\frac{m q}{v B}", "r = \\frac{B v}{m q}"],
     answer: 0,
-    note: "மையநோக்கு விசை = காந்த விசை; \\frac{m v^2}{r} = q v B. இதனைக் சுருக்கும் போது r = \\frac{m v}{q B} எனப் பெறப்படும்."
+    note: "மையநோக்கு விசை = காந்த விசை; \\frac{m v²}{r} = q v B. இதனைக் சுருக்கும் போது r = \\frac{m v}{q B} எனப் பெறப்படும்."
   },
   {
     id: "p7-paper1-q9",
@@ -82,7 +82,7 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p7-paper1-q12",
     q: "நீண்ட நேரான கடத்தியிலிருந்து r தூரத்தில் உள்ள புள்ளியில் காந்தப்பாய அடர்த்தி B:",
-    options: ["B \\propto r", "B \\propto \\frac{1}{r}", "B \\propto r^2", "B \\propto \\frac{1}{r^2}"],
+    options: ["B \\propto r", "B \\propto \\frac{1}{r}", "B \\propto r²", "B \\propto \\frac{1}{r²}"],
     answer: 1,
     note: "ஆம்பியரின் சுற்று விதியின்படி (Ampere's Law), நீண்ட நேரான கடத்திக்கான காந்தப்புலம் B = \\frac{\\mu_0 I}{2\\pi r} ஆகும். எனவே B \\propto \\frac{1}{r}."
   },
@@ -152,7 +152,7 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p7-paper1-q22",
     q: "திசைவேகத் தேர்ந்தெடுத்தி (Velocity Selector) ஒன்றில் மின்புலமும் (E) காந்தப்புலமும் (B) ஒன்றற்கொன்று செங்குத்தாக உள்ளன. விசை விலகல் அடையாமல் நேராகச் செல்லும் துகளின் வேகம் (v):",
-    options: ["v = \\frac{E}{B}", "v = \\frac{B}{E}", "v = E \\cdot B", "v = \\frac{E^2}{B}"],
+    options: ["v = \\frac{E}{B}", "v = \\frac{B}{E}", "v = E \\cdot B", "v = \\frac{E²}{B}"],
     answer: 0,
     note: "விலகலடையாத போது மின்விசையும் காந்தவிசையும் சமன்: q E = q v B \\Rightarrow v = \\frac{E}{B}."
   },
@@ -180,9 +180,9 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p7-paper1-q26",
     q: "பாயசம் தாங்கும் சுருள் ஒன்று காந்த இருமுனையகமாக (Magnetic Dipole) தொழிற்படும் போது அதன் காந்தத் திருப்பம் (Magnetic Moment, M):",
-    options: ["M = I A", "M = \\frac{I}{A}", "M = I^2 A", "M = \\frac{A}{I}"],
+    options: ["M = I A", "M = \\frac{I}{A}", "M = I² A", "M = \\frac{A}{I}"],
     answer: 0,
-    note: "காந்த இருமுனைத் திருப்பம் M = N I A ஆகும். ஓரலகு சுற்றுக்கு M = I A. இதன் அலகு A m^2 ஆகும்."
+    note: "காந்த இருமுனைத் திருப்பம் M = N I A ஆகும். ஓரலகு சுற்றுக்கு M = I A. இதன் அலகு A m² ஆகும்."
   },
   {
     id: "p7-paper1-q27",
@@ -327,14 +327,14 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
   {
     id: "p7-paper1-q47",
     q: "காந்தப்புலச் செறிவின் பரிமாணம் (Dimensions) என்ன?",
-    options: ["[M L T^{-2} A^{-1}]", "[M T^{-2} A^{-1}]", "[M L^2 T^{-2} A^{-1}]", "[M T^{-1} A^{-1}]"],
+    options: ["[M L T^{-2} A^{-1}]", "[M T^{-2} A^{-1}]", "[M L² T^{-2} A^{-1}]", "[M T^{-1} A^{-1}]"],
     answer: 1,
     note: "F = B I L \\Rightarrow B = \\frac{F}{I L}. பரிமாணம் = \\frac{[M L T^{-2}]}{[A][L]} = [M T^{-2} A^{-1}]."
   },
   {
     id: "p7-paper1-q48",
     q: "r ஆரையுடைய வட்டப்பாதையில் v வேகத்துடன் சுழலும் q மின்னூட்டமுடைய துகளொன்றின் சுழற்சியால் உருவாகும் சமவலு மின்னோட்டம் (Equivalent Current):",
-    options: ["I = \\frac{q v}{2\\pi r}", "I = \\frac{q v}{\\pi r^2}", "I = q v", "I = \\frac{2\\pi r q}{v}"],
+    options: ["I = \\frac{q v}{2\\pi r}", "I = \\frac{q v}{\\pi r²}", "I = q v", "I = \\frac{2\\pi r q}{v}"],
     answer: 0,
     note: "மின்னோட்டம் I = \\frac{q}{T}. இங்கு அலைவுகாலம் T = \\frac{2\\pi r}{v}. எனவே பிரதியிட I = \\frac{q v}{2\\pi r} என வரும்."
   },
@@ -350,6 +350,6 @@ export const physicsBatch7ExamQuestionsPaper1: ExamQuestion[] = [
     q: "பயோ-சாவர்ட் விதியின் (Biot-Savart Law) கணித வடிவம் எதனைப் போன்றது?",
     options: ["நியூட்டனின் ஈர்ப்பு விதி மற்றும் கூலோமின் விதி", "ஓமின் விதி", "விசைக்காப்பு விதி", "லென்சின் விதி"],
     answer: 0,
-    note: "பயோ-சாவர்ட் விதியும் தூரத்தின் வர்க்கத்திற்கு எதிர்விகிதசமனான (R^2 இற்கு எதிர்விகிதசமனான) விதியாகும். இது கூலோமின் நிலைமின் விதி மற்றும் நியூட்டனின் ஈர்ப்பு விதி போன்ற வடிவத்தைக் கொண்டது."
+    note: "பயோ-சாவர்ட் விதியும் தூரத்தின் வர்க்கத்திற்கு எதிர்விகிதசமனான (R² இற்கு எதிர்விகிதசமனான) விதியாகும். இது கூலோமின் நிலைமின் விதி மற்றும் நியூட்டனின் ஈர்ப்பு விதி போன்ற வடிவத்தைக் கொண்டது."
   }
 ];
