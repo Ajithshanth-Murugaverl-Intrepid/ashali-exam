@@ -85,7 +85,7 @@ export const physicsBatch3ExamQuestionsPaper1: ExamQuestion[] = [
       String.raw`0.25 m`,
     ],
     answer: 1,
-    note: String.raw`செக்கன் ஊசலின் அலைவுக்காலம் T = 2\text{ s} ஆகும். T = 2\pi \sqrt{\frac{l}{g}} சமன்பாட்டில் பிரதியிட்டால், 2 = 2\pi \sqrt{\frac{l}{9.8}} \Rightarrow l \approx 1\text{ m}.`,
+    note: String.raw`செக்கன் ஊசலின் அலைவுக்காலம் T = 2s ஆகும். T=2π√(l/g) சமன்பாட்டில் பிரதியிட்டால், 2=2π√(l/9.8)⇒l≈1m.`,
   },
   {
     id: "p3-paper1-q8",
@@ -98,7 +98,7 @@ export const physicsBatch3ExamQuestionsPaper1: ExamQuestion[] = [
       String.raw`1/4 மடங்காகும்`,
     ],
     answer: 0,
-    note: String.raw`சுருள்வில்லின் அலைவுக்காலம் T = 2\pi \sqrt{\frac{m}{k}} ஆகும். திணிவு m ஆனது 4m ஆகும்போது, T' = 2\pi \sqrt{\frac{4m}{k}} = 2T. எனவே அலைவுக்காலம் 2 மடங்காகும்.`,
+    note: String.raw`சுருள்வில்லின் அலைவுக்காலம்  T = 2\pi \sqrt{\frac{m}{k}} ஆகும். திணிவு m ஆனது 4m ஆகும்போது, T' = 2\pi \sqrt{\frac{4m}{k}} = 2T. எனவே அலைவுக்காலம் 2 மடங்காகும்.`,
   },
   {
     id: "p3-paper1-q9",
@@ -260,14 +260,14 @@ export const physicsBatch3ExamQuestionsPaper1: ExamQuestion[] = [
     id: "p3-paper1-q21",
     q: String.raw`சுருள்வில் தராசு ஒன்று புவியிலும் நிலவிலும் அலைவூட்டப்படுகிறது. நிலவின் ஈர்ப்பு ஆர்முடுகல் புவியினுடையதன் 1/6 பங்காகும். சுருள்வில்லின் அலைவுக்காலம் நிலவில் எவ்வாறிருக்கும்?`,
     options: [
-      String.raw`\sqrt{6} மடங்காகும்`,
-      String.raw`1/\sqrt{6} மடங்காகும்`,
+      String.raw`√6 மடங்காகும்`,
+      String.raw`1/√6 மடங்காகும்`,
       String.raw`6 மடங்காகும்`,
       String.raw`மாறாது இருக்கும்`,
       String.raw`1/6 மடங்காகும்`,
     ],
     answer: 3,
-    note: String.raw`சுருள்வில்-திணிவுத் தொகுதியின் அலைவுக்காலம் T = 2\pi\sqrt{\frac{m}{k}} ஆகும். இச்சமன்பாட்டில் g இல்லை. எனவே இது புவியீர்ப்பு ஆர்முடுகலில் தங்கியிருக்காது, மாறாது இருக்கும்.`,
+    note: String.raw`சுருள்வில்-திணிவுத் தொகுதியின் அலைவுக்காலம் T=2π√(m/k) ஆகும். இச்சமன்பாட்டில் g இல்லை. எனவே இது புவியீர்ப்பு ஆர்முடுகலில் தங்கியிருக்காது, மாறாது இருக்கும்.`,
   },
   {
     id: "p3-paper1-q22",

@@ -5,6 +5,9 @@ import { createPortal } from "react-dom";
 import ExamModule, { type ExamQuestion } from "./ExamModule";
 import { physicsBatch1ExamQuestionsPaper1 } from "./physicsBatch1ExamQuestionsPaper1";
 import { physicsBatch2ExamQuestionsPaper1 } from "./physicsBatch2ExamQuestionsPaper1";
+import { physicsBatch2ExamQuestionsPaper2 } from "./physicsBatch2ExamQuestionsPaper2";
+import { physicsBatch2ExamQuestionsPaper3 } from "./physicsBatch2ExamQuestionsPaper3";
+import { physicsBatch2ExamQuestionsPaper4 } from "./physicsBatch2ExamQuestionsPaper4";
 import { physicsBatch3ExamQuestionsPaper1 } from "./physicsBatch3ExamQuestionsPaper1";
 import { physicsBatch3ExamQuestionsPaper2 } from "./physicsBatch3ExamQuestionsPaper2";
 import { physicsBatch3ExamQuestionsPaper3 } from "./physicsBatch3ExamQuestionsPaper3";
@@ -17,6 +20,7 @@ import { physicsBatch8ExamQuestionsPaper1 } from "./physicsBatch8ExamQuestionsPa
 import { physicsBatch9ExamQuestionsPaper1 } from "./physicsBatch9ExamQuestionsPaper1";
 import { physicsBatch10ExamQuestionsPaper1 } from "./physicsBatch10ExamQuestionsPaper1";
 import { physicsBatch11ExamQuestionsPaper1 } from "./physicsBatch11ExamQuestionsPaper1";
+import { physicsBatch2ExamQuestionsPaper5 } from "./physicsBatch2ExamQuestionsPaper5";
 
 type RandomQuestion = ExamQuestion & {
   randomId: string;
@@ -66,9 +70,42 @@ const PHYSICS_BATCHES: Batch[] = [
       {
         examCode: "PHY-B2-E1",
         label: "பரீட்சை 1",
+        focus: "இயக்கவியல் (Kinematics) & இயக்க வரைபுகள்",
         target: 50,
         durationSeconds: 7200,
         examQuestions: physicsBatch2ExamQuestionsPaper1
+      },
+      {
+        examCode: "PHY-B2-E2",
+        label: "பரீட்சை 2",
+        focus: "இயக்கவிசையியல் (Dynamics) & நிலைத்தியல் (Statics)",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch2ExamQuestionsPaper2
+      },
+      {
+        examCode: "PHY-B2-E3",
+        label: "பரீட்சை 3",
+        focus: "வேலை, சக்தி, வலு (Work, Energy, Power)",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch2ExamQuestionsPaper3
+      },
+      {
+        examCode: "PHY-B2-E4",
+        label: "பரீட்சை 4",
+        focus: "வட்ட இயக்கம் மற்றும் சுழற்சி இயக்கவிசையியல்",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch2ExamQuestionsPaper4
+      },
+      {
+        examCode: "PHY-B2-E5",
+        label: "பரீட்சை 5",
+        focus: "நீர்நிலைத்தியல் (Hydrostatics)",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch2ExamQuestionsPaper5
       }
     ]
   },
