@@ -13,6 +13,7 @@ export type ExamQuestion = {
 
 export type ExamConfig = {
   title: string;
+  examCode?: string;
   units: string;
   focus: string;
   durationSeconds: number;
@@ -91,6 +92,7 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
             <button className="em-x-btn" type="button" onClick={onClose} aria-label="மூடு">✕</button>
             <div className="em-intro-icon">📋</div>
             <h2 className="em-intro-title">{config.title}</h2>
+            {config.examCode && <p className="em-exam-code">Exam Code: {config.examCode}</p>}
             <p className="em-intro-units">{config.units}</p>
             <p className="em-intro-focus">{config.focus}</p>
             <div className="em-meta-row">
@@ -129,6 +131,7 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
             <div className={`em-topbar${isWarning ? " em-topbar-warn" : ""}${isCritical ? " em-topbar-crit" : ""}`}>
               <div className="em-tb-left">
                 <span className="em-tb-title">{config.title}</span>
+                {config.examCode && <span className="em-tb-code">Code: {config.examCode}</span>}
                 <span className="em-tb-prog">
                   {answeredCount} / {config.questions.length} பதிலளிக்கப்பட்டது
                 </span>
@@ -347,6 +350,15 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
           font-weight: 600;
         }
 
+        .em-exam-code {
+          margin: 0;
+          color: #d4f1ff;
+          font-size: 0.82rem;
+          font-weight: 700;
+          letter-spacing: 0.03em;
+          text-transform: uppercase;
+        }
+
         .em-intro-focus {
           margin: 0;
           color: #b4bbd6;
@@ -447,6 +459,7 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
 
         .em-tb-left { display: flex; flex-direction: column; gap: 2px; }
         .em-tb-title { font-size: 0.85rem; font-weight: 700; color: #f3f2ff; }
+        .em-tb-code { font-size: 0.7rem; color: #d4f1ff; letter-spacing: 0.03em; text-transform: uppercase; }
         .em-tb-prog { font-size: 0.72rem; color: #9fb2ff; }
 
         .em-tb-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

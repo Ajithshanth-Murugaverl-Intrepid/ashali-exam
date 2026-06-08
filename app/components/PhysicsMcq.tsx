@@ -3,17 +3,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import ExamModule, { type ExamQuestion } from "./ExamModule";
-import { physicsBatch1ExamQuestions } from "./physicsBatch1ExamQuestions";
-import { physicsBatch2ExamQuestions } from "./physicsBatch2ExamQuestions";
-import { physicsBatch3ExamQuestions } from "./physicsBatch3ExamQuestions";
-import { physicsBatch4ExamQuestions } from "./physicsBatch4ExamQuestions";
-import { physicsBatch5ExamQuestions } from "./physicsBatch5ExamQuestions";
-import { physicsBatch6ExamQuestions } from "./physicsBatch6ExamQuestions";
-import { physicsBatch7ExamQuestions } from "./physicsBatch7ExamQuestions";
-import { physicsBatch8ExamQuestions } from "./physicsBatch8ExamQuestions";
-import { physicsBatch9ExamQuestions } from "./physicsBatch9ExamQuestions";
-import { physicsBatch10ExamQuestions } from "./physicsBatch10ExamQuestions";
-import { physicsBatch11ExamQuestions } from "./physicsBatch11ExamQuestions";
+import { physicsBatch1ExamQuestionsPaper1 } from "./physicsBatch1ExamQuestionsPaper1";
+import { physicsBatch2ExamQuestionsPaper1 } from "./physicsBatch2ExamQuestionsPaper1";
+import { physicsBatch3ExamQuestionsPaper1 } from "./physicsBatch3ExamQuestionsPaper1";
+import { physicsBatch4ExamQuestionsPaper1 } from "./physicsBatch4ExamQuestionsPaper1";
+import { physicsBatch5ExamQuestionsPaper1 } from "./physicsBatch5ExamQuestionsPaper1";
+import { physicsBatch6ExamQuestionsPaper1 } from "./physicsBatch6ExamQuestionsPaper1";
+import { physicsBatch7ExamQuestionsPaper1 } from "./physicsBatch7ExamQuestionsPaper1";
+import { physicsBatch8ExamQuestionsPaper1 } from "./physicsBatch8ExamQuestionsPaper1";
+import { physicsBatch9ExamQuestionsPaper1 } from "./physicsBatch9ExamQuestionsPaper1";
+import { physicsBatch10ExamQuestionsPaper1 } from "./physicsBatch10ExamQuestionsPaper1";
+import { physicsBatch11ExamQuestionsPaper1 } from "./physicsBatch11ExamQuestionsPaper1";
 
 type RandomQuestion = ExamQuestion & {
   randomId: string;
@@ -21,14 +21,20 @@ type RandomQuestion = ExamQuestion & {
   batchUnits: string;
 };
 
+type BatchExam = {
+  examCode: string;
+  label: string;
+  target: number;
+  durationSeconds: number;
+  examQuestions: ExamQuestion[];
+};
+
 type Batch = {
   id: string;
   label: string;
   units: string;
   focus: string;
-  target: number;
-  durationSeconds: number;
-  examQuestions: ExamQuestion[];
+  exams: BatchExam[];
 };
 
 const PHYSICS_BATCHES: Batch[] = [
@@ -37,99 +43,165 @@ const PHYSICS_BATCHES: Batch[] = [
     label: "தொகுதி 1",
     units: "அலகு 1",
     focus: "அளவீடு: SI அலகுகள், பரிமாணங்கள், அளவீட்டு கருவிகள், திசையன்கள்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch1ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B1-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch1ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p2",
     label: "தொகுதி 2",
     units: "அலகு 2",
     focus: "பொறியியல்: Kinematics, Dynamics, Statics, Work-Energy-Power, வட்ட/சுழற்சி இயக்கம், Hydrostatics",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch2ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B2-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch2ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p3",
     label: "தொகுதி 3",
     units: "அலகு 3",
     focus: "அலைவுகளும் அலைகளும்: SHM, ஒலி, ஒளி, குறுக்கீடு, விளிம்பு விளைவு, முனைவாக்கம்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch3ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B3-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch3ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p4",
     label: "தொகுதி 4",
     units: "அலகு 4",
     focus: "வெப்பப் பௌதிகவியல்: வெப்பநிலை, வாயு விதிகள், வெப்ப இடமாற்றம், வெப்ப இயக்கவியல்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch4ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B4-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch4ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p5",
     label: "தொகுதி 5",
     units: "அலகு 5",
     focus: "ஈர்ப்புப் புலம்: அகில ஈர்ப்பு விதி, g, விடுபடுகதி, செயற்கைக்கோள் இயக்கம்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch5ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B5-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch5ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p6",
     label: "தொகுதி 6",
     units: "அலகு 6",
     focus: "நிலைமின்புலம்: கூலோம் விதி, மின்புலச்செறிவு, அழுத்தம், கொள்ளளவிகள்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch6ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B6-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch6ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p7",
     label: "தொகுதி 7",
     units: "அலகு 7",
     focus: "காந்தப்புலம்: அசையும் மின்னேற்றங்கள், Biot-Savart, Ampere விதி, சுருள் மீதான திருப்புத்திறன்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch7ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B7-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch7ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p8",
     label: "தொகுதி 8",
     units: "அலகு 8",
     focus: "ஓட்டமின்னியல்: Ohm விதி, e.m.f., Kirchhoff விதிகள், Wheatstone bridge, Potentiometer",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch8ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B8-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch8ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p9",
     label: "தொகுதி 9",
     units: "அலகு 9",
     focus: "இலத்திரனியல்: Diodes, Transistor, Op-Amp, Digital logic gates",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch9ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B9-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch9ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p10",
     label: "தொகுதி 10",
     units: "அலகு 10",
     focus: "பதார்த்தங்களின் இயந்திரவியல் இயல்புகள்: மீட்சித்தன்மை, பாகுத்தன்மை, மேற்பரப்பு இழுவை",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch10ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B10-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch10ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "p11",
     label: "தொகுதி 11",
     units: "அலகு 11",
     focus: "பதார்த்தமும் கதிர்வீச்சும்: ஒளிமின் விளைவு, அணுக்கட்டமைப்பு, உட்கருப் பௌதிகவியல்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: physicsBatch11ExamQuestions
+    exams: [
+      {
+        examCode: "PHY-B11-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: physicsBatch11ExamQuestionsPaper1
+      }
+    ]
   }
 ];
 
@@ -143,26 +215,50 @@ export default function PhysicsMcq() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [randomBackStack, setRandomBackStack] = useState<RandomQuestion[]>([]);
 
-  const [examBatch, setExamBatch] = useState<string | null>(null);
+  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
+  const [selectedExamKey, setSelectedExamKey] = useState<string | null>(null);
 
-  const totalTarget = useMemo(
-    () => PHYSICS_BATCHES.reduce((sum, batch) => sum + batch.target, 0),
+  const totalTarget = useMemo(() =>
+    PHYSICS_BATCHES.reduce(
+      (sum, batch) => sum + batch.exams.reduce((inner, exam) => inner + exam.target, 0),
+      0
+    ),
+    []
+  );
+  const totalExamCount = useMemo(
+    () => PHYSICS_BATCHES.reduce((sum, batch) => sum + batch.exams.length, 0),
     []
   );
 
   const randomQuestions = useMemo(
     () => PHYSICS_BATCHES
-      .filter((batch) => batch.examQuestions.length > 0)
+      .filter((batch) => batch.exams.some((exam) => exam.examQuestions.length > 0))
       .flatMap((batch) =>
-        batch.examQuestions.map((question) => ({
-          ...question,
-          randomId: `${batch.id}:${question.id}`,
-          batchId: batch.id,
-          batchUnits: batch.units
-        }))
+        batch.exams.flatMap((exam) =>
+          exam.examQuestions.map((question) => ({
+            ...question,
+            randomId: `${batch.id}:${exam.examCode}:${question.id}`,
+            batchId: batch.id,
+            batchUnits: `${batch.units} · ${exam.examCode}`
+          }))
+        )
       ),
     []
   );
+
+  const selectedBatch = useMemo(
+    () => PHYSICS_BATCHES.find((batch) => batch.id === selectedBatchId) ?? null,
+    [selectedBatchId]
+  );
+
+  const selectedExam = useMemo(() => {
+    if (!selectedExamKey) return null;
+    const [batchId, examCode] = selectedExamKey.split(":");
+    const batch = PHYSICS_BATCHES.find((item) => item.id === batchId);
+    if (!batch) return null;
+    const exam = batch.exams.find((item) => item.examCode === examCode);
+    return exam ? { batch, exam } : null;
+  }, [selectedExamKey]);
 
   const pickRandom = useCallback(
     (existingSeen: ReadonlySet<string>) => {
@@ -237,7 +333,7 @@ export default function PhysicsMcq() {
           <span className="subject-icon" aria-hidden="true">🔭</span>
           <div>
             <h3 className="subject-name">பெளதிகவியல் (Physics)</h3>
-            <p className="subject-meta">11 தொகுதிகள் · இலக்கு: {totalTarget} கேள்விகள்</p>
+            <p className="subject-meta">11 தொகுதிகள் · {totalExamCount} பரீட்சைகள் · இலக்கு: {totalTarget} கேள்விகள்</p>
           </div>
         </div>
         <button className="practice-btn" type="button" onClick={handleOpen}>
@@ -289,7 +385,8 @@ export default function PhysicsMcq() {
                 type="button"
                 onClick={() => {
                   setMode("unit");
-                  setExamBatch(null);
+                  setSelectedBatchId(null);
+                  setSelectedExamKey(null);
                 }}
               >
                 📚 அலகு வாரியாக
@@ -374,26 +471,71 @@ export default function PhysicsMcq() {
 
               {mode === "unit" && (
                 <div className="unit-mode">
-                  <div className="batch-grid">
-                    {PHYSICS_BATCHES.map((batch) => (
-                      <button
-                        key={batch.id}
-                        className="batch-card"
-                        type="button"
-                        onClick={() => setExamBatch(batch.id)}
-                        disabled={batch.examQuestions.length === 0}
-                      >
-                        <span className="batch-label">{batch.label}</span>
-                        <span className="batch-units">{batch.units}</span>
-                        <span className="batch-focus">{batch.focus}</span>
-                        <span className="batch-count">
-                          {batch.examQuestions.length > 0
-                            ? `${batch.examQuestions.length} / ${batch.target} வினாக்கள்`
-                            : "🔜 விரைவில் வரும்"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  {!selectedBatch && (
+                    <div className="batch-grid">
+                      {PHYSICS_BATCHES.map((batch) => {
+                        const availableExamCount = batch.exams.filter((exam) => exam.examQuestions.length > 0).length;
+                        const totalBatchQuestions = batch.exams.reduce((sum, exam) => sum + exam.target, 0);
+                        return (
+                          <button
+                            key={batch.id}
+                            className="batch-card"
+                            type="button"
+                            onClick={() => setSelectedBatchId(batch.id)}
+                            disabled={availableExamCount === 0}
+                          >
+                            <span className="batch-label">{batch.label}</span>
+                            <span className="batch-units">{batch.units}</span>
+                            <span className="batch-focus">{batch.focus}</span>
+                            <span className="batch-count">
+                              {availableExamCount > 0
+                                ? `${availableExamCount} பரீட்சைகள் · இலக்கு: ${totalBatchQuestions} வினாக்கள்`
+                                : "🔜 விரைவில் வரும்"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {selectedBatch && (
+                    <>
+                      <div className="batch-nav">
+                        <button
+                          className="back-btn"
+                          type="button"
+                          onClick={() => {
+                            setSelectedBatchId(null);
+                            setSelectedExamKey(null);
+                          }}
+                        >
+                          ← தொகுதிகள்
+                        </button>
+                        <span className="batch-nav-title">{selectedBatch.label} — பரீட்சைகள்</span>
+                      </div>
+
+                      <div className="batch-grid">
+                        {selectedBatch.exams.map((exam) => (
+                          <button
+                            key={exam.examCode}
+                            className="batch-card"
+                            type="button"
+                            onClick={() => setSelectedExamKey(`${selectedBatch.id}:${exam.examCode}`)}
+                            disabled={exam.examQuestions.length === 0}
+                          >
+                            <span className="batch-label">{exam.label}</span>
+                            <span className="batch-units">குறியீடு: {exam.examCode}</span>
+                            <span className="batch-focus">{selectedBatch.focus}</span>
+                            <span className="batch-count">
+                              {exam.examQuestions.length > 0
+                                ? `${exam.examQuestions.length} / ${exam.target} வினாக்கள்`
+                                : "🔜 விரைவில் வரும்"}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -402,19 +544,20 @@ export default function PhysicsMcq() {
         document.body
       )}
 
-      {examBatch && (() => {
-        const batch = PHYSICS_BATCHES.find((b) => b.id === examBatch);
-        if (!batch || batch.examQuestions.length === 0) return null;
+      {selectedExam && (() => {
+        const { batch, exam } = selectedExam;
+        if (!exam || exam.examQuestions.length === 0) return null;
         return (
           <ExamModule
             config={{
-              title: `🔭 பெளதிகவியல் தேர்வு — ${batch.label}`,
+              title: `🔭 பெளதிகவியல் தேர்வு — ${batch.label} (${exam.label})`,
+              examCode: exam.examCode,
               units: batch.units,
               focus: batch.focus,
-              durationSeconds: batch.durationSeconds,
-              questions: batch.examQuestions
+              durationSeconds: exam.durationSeconds,
+              questions: exam.examQuestions
             }}
-            onClose={() => setExamBatch(null)}
+            onClose={() => setSelectedExamKey(null)}
           />
         );
       })()}
@@ -819,6 +962,38 @@ export default function PhysicsMcq() {
           color: #7dd3fc;
           font-weight: 600;
           margin-top: 4px;
+        }
+
+        .batch-nav {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-bottom: 4px;
+        }
+
+        .back-btn {
+          appearance: none;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+          padding: 7px 12px;
+          background: rgba(255, 255, 255, 0.07);
+          color: #f3f2ff;
+          cursor: pointer;
+          font-family: inherit;
+          font-size: 0.83rem;
+          font-weight: 600;
+          transition: all 180ms ease;
+          flex-shrink: 0;
+        }
+
+        .back-btn:hover {
+          background: rgba(255, 255, 255, 0.14);
+        }
+
+        .batch-nav-title {
+          font-size: 0.85rem;
+          color: #b4bbd6;
         }
 
         @media (min-width: 560px) {

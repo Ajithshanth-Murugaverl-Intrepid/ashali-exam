@@ -32,24 +32,37 @@ const CHALLENGES = [
   "Finish one chapter recap before the end of the day."
 ];
 
-type SubjectMarks = {
+type ExamMarkEntry = {
   subject: string;
-  exams: number[];
+  examCode: string;
+  maxMark: number;
+  mark: number;
 };
 
-const SUBJECT_MARKS: SubjectMarks[] = [
-  {
-    subject: "Physics",
-    exams: [38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  },
-  {
-    subject: "Biology",
-    exams: [37, 0, 0, 0, 0, 0, 0]
-  },
-  // {
-  //   subject: "Chemistry",
-  //   exams: [0, 0, 0, 0, 0]
-  // }
+const EXAM_MARK_ENTRIES: ExamMarkEntry[] = [
+  { subject: "Physics", examCode: "PHY-B1-E1", maxMark: 50, mark: 38 },
+  { subject: "Physics", examCode: "PHY-B2-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B3-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B4-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B5-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B6-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B7-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B8-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B9-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B10-E1", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B11-E1", maxMark: 50, mark: 0 },
+
+  { subject: "Biology", examCode: "BIO-B1-E1", maxMark: 50, mark: 37 },
+  { subject: "Biology", examCode: "BIO-B2-E1", maxMark: 50, mark: 0 },
+  { subject: "Biology", examCode: "BIO-B3-E1", maxMark: 50, mark: 0 },
+  { subject: "Biology", examCode: "BIO-B4-E1", maxMark: 50, mark: 0 },
+  { subject: "Biology", examCode: "BIO-B5-E1", maxMark: 50, mark: 0 },
+  { subject: "Biology", examCode: "BIO-B6-E1", maxMark: 50, mark: 0 },
+  { subject: "Biology", examCode: "BIO-B7-E1", maxMark: 50, mark: 0 },
+  { subject: "Biology", examCode: "BIO-B7-E2", maxMark: 50, mark: 0 }
+
+  // { subject: "Chemistry", examCode: "CHE-B1-E1", maxMark: 50, mark: 0 },
+  // Add future exam papers here with examCode and mark.
 ];
 
 type Countdown = {
@@ -149,20 +162,34 @@ export default function Home() {
   const greeting = getGreeting(hourNow);
 
   const subjectMarksSummary = useMemo(
-    () => SUBJECT_MARKS.map((item) => {
-      const total = item.exams.reduce((sum, mark) => sum + mark, 0);
-      const completedExamMarks = item.exams.filter((mark) => mark > 0);
-      const completedTotal = completedExamMarks.reduce((sum, mark) => sum + mark, 0);
-      const average = completedExamMarks.length > 0 ? completedTotal / completedExamMarks.length : 0;
-      // const averageOutOf100 = Math.min(100, average * 2);
+    () => {
+      const grouped = EXAM_MARK_ENTRIES.reduce<Record<string, ExamMarkEntry[]>>((acc, entry) => {
+        if (!acc[entry.subject]) acc[entry.subject] = [];
+        acc[entry.subject].push(entry);
+        return acc;
+      }, {});
 
-      return {
-        ...item,
-        total,
-        average,
-        completedExams: completedExamMarks.length
-      };
-    }),
+      return Object.entries(grouped).map(([subject, exams]) => {
+        const completedExams = exams.filter((exam) => exam.mark > 0);
+        const total = exams.reduce((sum, exam) => sum + exam.mark, 0);
+        const completedTotal = completedExams.reduce((sum, exam) => sum + exam.mark, 0);
+        const completedMaxTotal = completedExams.reduce((sum, exam) => sum + exam.maxMark, 0);
+        const averageOutOf100 = completedExams.length > 0
+          ? completedExams.reduce((sum, exam) => sum + ((exam.mark / exam.maxMark) * 100), 0) / completedExams.length
+          : 0;
+
+        return {
+          subject,
+          exams,
+          total,
+          completedTotal,
+          completedMaxTotal,
+          averageOutOf100,
+          completedExamsCount: completedExams.length,
+          totalExamsCount: exams.length
+        };
+      });
+    },
     []
   );
 
@@ -312,19 +339,20 @@ export default function Home() {
               <article key={subject.subject} className="marks-card">
                 <div className="marks-head">
                   <h3>{subject.subject}</h3>
-                  <span>{subject.completedExams}/{subject.exams.length} completed</span>
+                  <span>{subject.completedExamsCount}/{subject.totalExamsCount} completed</span>
                 </div>
                 <div className="marks-meta">
                   <p><strong>Total:</strong> {subject.total}</p>
                   <p>
-                    <strong>Average:</strong>
-                    <span className="average-chip">{subject.average.toFixed(2)}</span>
+                    <strong>Average(100):</strong>
+                    <span className="average-chip">{subject.averageOutOf100.toFixed(2)}</span>
                   </p>
                 </div>
+                <p className="marks-subline">Completed total: {subject.completedTotal}/{subject.completedMaxTotal || 0}</p>
                 <div className="marks-chips">
-                  {subject.exams.map((mark, index) => (
-                    <span key={`${subject.subject}-${index}`} className="mark-chip">
-                      E{index + 1}: {mark}
+                  {subject.exams.map((exam) => (
+                    <span key={exam.examCode} className="mark-chip">
+                      {exam.examCode}: {exam.mark}/{exam.maxMark}
                     </span>
                   ))}
                 </div>
@@ -870,6 +898,12 @@ export default function Home() {
           margin: 0;
           font-size: 0.9rem;
           color: #e8e9ff;
+        }
+
+        .marks-subline {
+          margin: 0;
+          font-size: 0.8rem;
+          color: #b4bbd6;
         }
 
         .marks-chips {

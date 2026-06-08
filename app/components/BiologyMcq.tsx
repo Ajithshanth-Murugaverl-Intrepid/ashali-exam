@@ -3,13 +3,14 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { createPortal } from "react-dom";
 import ExamModule, { type ExamQuestion } from "./ExamModule";
-import { biologyBatch1ExamQuestions } from "./biologyBatch1ExamQuestions";
-import { biologyBatch2ExamQuestions } from "./biologyBatch2ExamQuestions";
-import { biologyBatch3ExamQuestions } from "./biologyBatch3ExamQuestions";
-import { biologyBatch4ExamQuestions } from "./biologyBatch4ExamQuestions";
-import { biologyBatch5ExamQuestions } from "./biologyBatch5ExamQuestions";
-import { biologyBatch6ExamQuestions } from "./biologyBatch6ExamQuestions";
-import { biologyBatch7ExamQuestions } from "./biologyBatch7ExamQuestions";
+import { biologyBatch1ExamQuestionsPaper1 } from "./biologyBatch1ExamQuestionsPaper1";
+import { biologyBatch2ExamQuestionsPaper1 } from "./biologyBatch2ExamQuestionsPaper1";
+import { biologyBatch3ExamQuestionsPaper1 } from "./biologyBatch3ExamQuestionsPaper1";
+import { biologyBatch4ExamQuestionsPaper1 } from "./biologyBatch4ExamQuestionsPaper1";
+import { biologyBatch5ExamQuestionsPaper1 } from "./biologyBatch5ExamQuestionsPaper1";
+import { biologyBatch6ExamQuestionsPaper1 } from "./biologyBatch6ExamQuestionsPaper1";
+import { biologyBatch7ExamQuestionsPaper1 } from "./biologyBatch7ExamQuestionsPaper1";
+import { biologyBatch7ExamQuestionsPaper2 } from "./biologyBatch7ExamQuestionsPaper2";
 
 type RandomQuestion = ExamQuestion & {
   randomId: string;
@@ -17,14 +18,20 @@ type RandomQuestion = ExamQuestion & {
   batchUnits: string;
 };
 
+type BatchExam = {
+  examCode: string;
+  label: string;
+  target: number;
+  durationSeconds: number;
+  examQuestions: ExamQuestion[];
+};
+
 type Batch = {
   id: string;
   label: string;
   units: string;
   focus: string;
-  target: number;
-  durationSeconds: number;
-  examQuestions: ExamQuestion[];
+  exams: BatchExam[];
 };
 
 const BIOLOGY_BATCHES: Batch[] = [
@@ -33,63 +40,112 @@ const BIOLOGY_BATCHES: Batch[] = [
     label: "தொகுதி 1",
     units: "அலகு 1 & 2",
     focus: "வாழ்வின் இரசாயனவியல் அடிப்படை & செல் உயிரியல்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: biologyBatch1ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B1-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch1ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "b2",
     label: "தொகுதி 2",
     units: "அலகு 3",
     focus: "உயிரினங்களின் பரிணாமம் & பன்முகத்தன்மை",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: biologyBatch2ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B2-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch2ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "b3",
     label: "தொகுதி 3",
     units: "அலகு 4",
     focus: "தாவர வடிவமும் செயல்பாடும் (நீர் சமன்பாடு, ஒளிச்சேர்க்கை)",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: biologyBatch3ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B3-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch3ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "b4",
     label: "தொகுதி 4",
     units: "அலகு 5 (பகுதி அ)",
     focus: "விலங்கு வடிவமும் செயல்பாடும் — செரிமானம், இரத்த ஓட்டம், சுவாசம்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: biologyBatch4ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B4-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch4ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "b5",
     label: "தொகுதி 5",
     units: "அலகு 5 (பகுதி ஆ)",
     focus: "விலங்கு வடிவமும் செயல்பாடும் — கழிவு நீக்கம், நரம்பு/நாளமில்லா, இனப்பெருக்கம்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: biologyBatch5ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B5-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch5ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "b6",
     label: "தொகுதி 6",
     units: "அலகு 6 & 7",
     focus: "மரபியல், மூலக்கூறு உயிரியல் & மறுசேர்க்கை DNA தொழில்நுட்பம்",
-    target: 50,
-    durationSeconds: 7200,
-    examQuestions: biologyBatch6ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B6-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch6ExamQuestionsPaper1
+      }
+    ]
   },
   {
     id: "b7",
     label: "தொகுதி 7",
     units: "அலகு 8, 9 & 10",
     focus: "சுற்றுச்சூழல் உயிரியல், நுண்ணுயிரியல் & பயன்பாட்டு உயிரியல்",
-    target: 100,
-    durationSeconds: 10800,
-    examQuestions: biologyBatch7ExamQuestions
+    exams: [
+      {
+        examCode: "BIO-B7-E1",
+        label: "பரீட்சை 1",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch7ExamQuestionsPaper1
+      },
+      {
+        examCode: "BIO-B7-E2",
+        label: "பரீட்சை 2",
+        target: 50,
+        durationSeconds: 7200,
+        examQuestions: biologyBatch7ExamQuestionsPaper2
+      }
+    ]
   }
 ];
 
@@ -105,23 +161,44 @@ export default function BiologyMcq() {
   const [randomBackStack, setRandomBackStack] = useState<RandomQuestion[]>([]);
 
   // Unit mode
-  const [examBatch, setExamBatch] = useState<string | null>(null);
+  const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
+  const [selectedExamKey, setSelectedExamKey] = useState<string | null>(null);
 
   const randomQuestions = useMemo(
     () => BIOLOGY_BATCHES
-      .filter((batch) => batch.examQuestions.length > 0)
+      .filter((batch) => batch.exams.some((exam) => exam.examQuestions.length > 0))
       .flatMap((batch) =>
-        batch.examQuestions.map((question) => ({
-          ...question,
-          randomId: `${batch.id}:${question.id}`,
-          batchId: batch.id,
-          batchUnits: batch.units
-        }))
+        batch.exams.flatMap((exam) =>
+          exam.examQuestions.map((question) => ({
+            ...question,
+            randomId: `${batch.id}:${exam.examCode}:${question.id}`,
+            batchId: batch.id,
+            batchUnits: `${batch.units} · ${exam.examCode}`
+          }))
+        )
       ),
     []
   );
 
-  const totalTarget = BIOLOGY_BATCHES.reduce((sum, b) => sum + b.target, 0);
+  const totalTarget = BIOLOGY_BATCHES.reduce(
+    (sum, batch) => sum + batch.exams.reduce((inner, exam) => inner + exam.target, 0),
+    0
+  );
+  const totalExamCount = BIOLOGY_BATCHES.reduce((sum, batch) => sum + batch.exams.length, 0);
+
+  const selectedBatch = useMemo(
+    () => BIOLOGY_BATCHES.find((batch) => batch.id === selectedBatchId) ?? null,
+    [selectedBatchId]
+  );
+
+  const selectedExam = useMemo(() => {
+    if (!selectedExamKey) return null;
+    const [batchId, examCode] = selectedExamKey.split(":");
+    const batch = BIOLOGY_BATCHES.find((item) => item.id === batchId);
+    if (!batch) return null;
+    const exam = batch.exams.find((item) => item.examCode === examCode);
+    return exam ? { batch, exam } : null;
+  }, [selectedExamKey]);
 
   const pickRandom = useCallback(
     (existingSeen: ReadonlySet<string>) => {
@@ -196,7 +273,7 @@ export default function BiologyMcq() {
           <span className="subject-icon" aria-hidden="true">🧬</span>
           <div>
             <h3 className="subject-name">உயிரியல் (Biology)</h3>
-            <p className="subject-meta">7 தொகுதிகள் · இலக்கு: {totalTarget} கேள்விகள்</p>
+            <p className="subject-meta">{BIOLOGY_BATCHES.length} தொகுதிகள் · {totalExamCount} பரீட்சைகள் · இலக்கு: {totalTarget} கேள்விகள்</p>
           </div>
         </div>
         <button className="practice-btn" type="button" onClick={handleOpen}>
@@ -244,7 +321,11 @@ export default function BiologyMcq() {
                 aria-selected={mode === "unit"}
                 className={mode === "unit" ? "bio-tab bio-tab-active" : "bio-tab"}
                 type="button"
-                onClick={() => { setMode("unit"); setExamBatch(null); }}
+                onClick={() => {
+                  setMode("unit");
+                  setSelectedBatchId(null);
+                  setSelectedExamKey(null);
+                }}
               >
                 📚 அலகு வாரியாக
               </button>
@@ -334,26 +415,71 @@ export default function BiologyMcq() {
               {/* ── UNIT MODE ── */}
               {mode === "unit" && (
                 <div className="unit-mode">
-                  <div className="batch-grid">
-                    {BIOLOGY_BATCHES.map((batch) => (
-                      <button
-                        key={batch.id}
-                        className="batch-card"
-                        type="button"
-                        onClick={() => setExamBatch(batch.id)}
-                        disabled={batch.examQuestions.length === 0}
-                      >
-                        <span className="batch-label">{batch.label}</span>
-                        <span className="batch-units">{batch.units}</span>
-                        <span className="batch-focus">{batch.focus}</span>
-                        <span className="batch-count">
-                          {batch.examQuestions.length > 0
-                            ? `${batch.examQuestions.length} / ${batch.target} வினாக்கள்`
-                            : "🔜 விரைவில் வரும்"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  {!selectedBatch && (
+                    <div className="batch-grid">
+                      {BIOLOGY_BATCHES.map((batch) => {
+                        const availableExamCount = batch.exams.filter((exam) => exam.examQuestions.length > 0).length;
+                        const totalBatchQuestions = batch.exams.reduce((sum, exam) => sum + exam.target, 0);
+                        return (
+                          <button
+                            key={batch.id}
+                            className="batch-card"
+                            type="button"
+                            onClick={() => setSelectedBatchId(batch.id)}
+                            disabled={availableExamCount === 0}
+                          >
+                            <span className="batch-label">{batch.label}</span>
+                            <span className="batch-units">{batch.units}</span>
+                            <span className="batch-focus">{batch.focus}</span>
+                            <span className="batch-count">
+                              {availableExamCount > 0
+                                ? `${availableExamCount} பரீட்சைகள் · இலக்கு: ${totalBatchQuestions} வினாக்கள்`
+                                : "🔜 விரைவில் வரும்"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {selectedBatch && (
+                    <>
+                      <div className="batch-nav">
+                        <button
+                          className="back-btn"
+                          type="button"
+                          onClick={() => {
+                            setSelectedBatchId(null);
+                            setSelectedExamKey(null);
+                          }}
+                        >
+                          ← தொகுதிகள்
+                        </button>
+                        <span className="batch-nav-title">{selectedBatch.label} — பரீட்சைகள்</span>
+                      </div>
+
+                      <div className="batch-grid">
+                        {selectedBatch.exams.map((exam) => (
+                          <button
+                            key={exam.examCode}
+                            className="batch-card"
+                            type="button"
+                            onClick={() => setSelectedExamKey(`${selectedBatch.id}:${exam.examCode}`)}
+                            disabled={exam.examQuestions.length === 0}
+                          >
+                            <span className="batch-label">{exam.label}</span>
+                            <span className="batch-units">குறியீடு: {exam.examCode}</span>
+                            <span className="batch-focus">{selectedBatch.focus}</span>
+                            <span className="batch-count">
+                              {exam.examQuestions.length > 0
+                                ? `${exam.examQuestions.length} / ${exam.target} வினாக்கள்`
+                                : "🔜 விரைவில் வரும்"}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -361,19 +487,20 @@ export default function BiologyMcq() {
         </div>
       , document.body)}
 
-      {examBatch && (() => {
-        const batch = BIOLOGY_BATCHES.find((b) => b.id === examBatch);
-        if (!batch || batch.examQuestions.length === 0) return null;
+      {selectedExam && (() => {
+        const { batch, exam } = selectedExam;
+        if (!exam || exam.examQuestions.length === 0) return null;
         return (
           <ExamModule
             config={{
-              title: `🧬 உயிரியல் தேர்வு — ${batch.label}`,
+              title: `🧬 உயிரியல் தேர்வு — ${batch.label} (${exam.label})`,
+              examCode: exam.examCode,
               units: batch.units,
               focus: batch.focus,
-              durationSeconds: batch.durationSeconds,
-              questions: batch.examQuestions
+              durationSeconds: exam.durationSeconds,
+              questions: exam.examQuestions
             }}
-            onClose={() => setExamBatch(null)}
+            onClose={() => setSelectedExamKey(null)}
           />
         );
       })()}
