@@ -8,11 +8,13 @@ import { biologyBatch2ExamQuestions } from "./biologyBatch2ExamQuestions";
 import { biologyBatch3ExamQuestions } from "./biologyBatch3ExamQuestions";
 import { biologyBatch4ExamQuestions } from "./biologyBatch4ExamQuestions";
 import { biologyBatch5ExamQuestions } from "./biologyBatch5ExamQuestions";
+import { biologyBatch6ExamQuestions } from "./biologyBatch6ExamQuestions";
+import { biologyBatch7ExamQuestions } from "./biologyBatch7ExamQuestions";
 
 type RandomQuestion = ExamQuestion & {
   randomId: string;
   batchId: string;
-  batchLabel: string;
+  batchUnits: string;
 };
 
 type Batch = {
@@ -76,18 +78,18 @@ const BIOLOGY_BATCHES: Batch[] = [
     label: "தொகுதி 6",
     units: "அலகு 6 & 7",
     focus: "மரபியல், மூலக்கூறு உயிரியல் & மறுசேர்க்கை DNA தொழில்நுட்பம்",
-    target: 60,
-    durationSeconds: 0,
-    examQuestions: []
+    target: 50,
+    durationSeconds: 7200,
+    examQuestions: biologyBatch6ExamQuestions
   },
   {
     id: "b7",
     label: "தொகுதி 7",
     units: "அலகு 8, 9 & 10",
     focus: "சுற்றுச்சூழல் உயிரியல், நுண்ணுயிரியல் & பயன்பாட்டு உயிரியல்",
-    target: 90,
-    durationSeconds: 0,
-    examQuestions: []
+    target: 100,
+    durationSeconds: 10800,
+    examQuestions: biologyBatch7ExamQuestions
   }
 ];
 
@@ -99,6 +101,8 @@ export default function BiologyMcq() {
   const [seenIds, setSeenIds] = useState<ReadonlySet<string>>(new Set<string>());
   const [currentQ, setCurrentQ] = useState<RandomQuestion | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [randomBackStack, setRandomBackStack] = useState<RandomQuestion[]>([]);
 
   // Unit mode
   const [examBatch, setExamBatch] = useState<string | null>(null);
@@ -111,7 +115,7 @@ export default function BiologyMcq() {
           ...question,
           randomId: `${batch.id}:${question.id}`,
           batchId: batch.id,
-          batchLabel: batch.label
+          batchUnits: batch.units
         }))
       ),
     []
@@ -134,9 +138,16 @@ export default function BiologyMcq() {
       setSeenIds(baseSeen);
       setCurrentQ(picked);
       setRevealed(false);
+      setSelectedAnswer(null);
     },
     [randomQuestions]
   );
+
+  const selectRandomAnswer = (idx: number) => {
+    if (!currentQ || revealed) return;
+    setSelectedAnswer(idx);
+    setRevealed(true);
+  };
 
   useEffect(() => {
     if (open) {
@@ -155,7 +166,23 @@ export default function BiologyMcq() {
   const handleClose = () => setOpen(false);
 
   const nextRandom = () => {
-    if (randomQuestions.length > 0) pickRandom(seenIds);
+    if (randomQuestions.length > 0) {
+      if (currentQ) {
+        setRandomBackStack((prev) => [...prev, currentQ]);
+      }
+      pickRandom(seenIds);
+    }
+  };
+
+  const backRandom = () => {
+    setRandomBackStack((prev) => {
+      if (prev.length === 0) return prev;
+      const previousQ = prev[prev.length - 1];
+      setCurrentQ(previousQ);
+      setRevealed(false);
+      setSelectedAnswer(null);
+      return prev.slice(0, -1);
+    });
   };
 
   const seenPercent = randomQuestions.length > 0
@@ -233,46 +260,64 @@ export default function BiologyMcq() {
 
                   <div className="q-card">
                     <p className="q-label">கேள்வி</p>
-                    <p className="q-batch">{currentQ.batchLabel}</p>
+                    <p className="q-batch">{currentQ.batchUnits}</p>
                     <p className="q-text">{currentQ.q}</p>
 
                     <div className="q-options" role="list">
                       {currentQ.options.map((option, idx) => {
                         const isAnswer = idx === currentQ.answer;
-                        const optionClass = revealed && isAnswer
-                          ? "q-option q-option-correct"
-                          : "q-option";
+                        const isSelected = idx === selectedAnswer;
+                        const optionClass = [
+                          "q-option",
+                          !revealed ? "q-option-interactive" : "",
+                          revealed && isAnswer ? "q-option-correct" : "",
+                          revealed && isSelected && !isAnswer ? "q-option-wrong" : ""
+                        ].filter(Boolean).join(" ");
                         return (
-                          <div key={`${currentQ.randomId}-opt-${idx}`} className={optionClass} role="listitem">
+                          <button
+                            key={`${currentQ.randomId}-opt-${idx}`}
+                            className={optionClass}
+                            role="listitem"
+                            type="button"
+                            onClick={() => selectRandomAnswer(idx)}
+                            disabled={revealed}
+                          >
                             <span className="q-option-key">{String.fromCharCode(65 + idx)}.</span>
                             <span>{option}</span>
-                          </div>
+                          </button>
                         );
                       })}
                     </div>
 
-                    {!revealed ? (
-                      <button
-                        className="reveal-btn"
-                        type="button"
-                        onClick={() => setRevealed(true)}
-                      >
-                        விடை காட்டு
-                      </button>
-                    ) : (
-                      <div className="answer-reveal">
-                        <p className="a-label">✅ விடை</p>
-                        <p className="a-text">
-                          {String.fromCharCode(65 + currentQ.answer)}. {currentQ.options[currentQ.answer]}
-                        </p>
+                    {!revealed && <p className="pick-hint">ஒரு விடையைத் தேர்ந்தெடுக்கவும்.</p>}
+
+                    {revealed && selectedAnswer !== null && (
+                      <div className={selectedAnswer === currentQ.answer ? "answer-reveal answer-reveal-correct" : "answer-reveal answer-reveal-wrong"}>
+                        <p className="a-label">{selectedAnswer === currentQ.answer ? "✅ சரி" : "❌ தவறு"}</p>
+                        {selectedAnswer === currentQ.answer ? (
+                          <p className="a-text">சரியான விடை: {String.fromCharCode(65 + currentQ.answer)}. {currentQ.options[currentQ.answer]}</p>
+                        ) : (
+                          <p className="a-text">சரியான விடை: {String.fromCharCode(65 + currentQ.answer)}. {currentQ.options[currentQ.answer]}</p>
+                        )}
                         {currentQ.note && <p className="a-note">{currentQ.note}</p>}
                       </div>
                     )}
                   </div>
 
-                  <button className="next-btn" type="button" onClick={nextRandom}>
-                    அடுத்த கேள்வி →
-                  </button>
+                  <div className="random-actions">
+                    <button
+                      className="back-random-btn"
+                      type="button"
+                      onClick={backRandom}
+                      disabled={randomBackStack.length === 0}
+                    >
+                      ← முந்தைய கேள்வி
+                    </button>
+
+                    <button className="next-btn" type="button" onClick={nextRandom}>
+                      அடுத்த கேள்வி →
+                    </button>
+                  </div>
 
                   {seenIds.size === randomQuestions.length && randomQuestions.length > 0 && (
                     <p className="all-seen-note">
@@ -574,12 +619,36 @@ export default function BiologyMcq() {
           font-size: 0.9rem;
           color: #e7ebff;
           line-height: 1.5;
+          width: 100%;
+          text-align: left;
+          font-family: inherit;
+          cursor: default;
+        }
+
+        .q-option-interactive {
+          cursor: pointer;
+          transition: all 160ms ease;
+        }
+
+        .q-option-interactive:hover {
+          border-color: rgba(127, 91, 255, 0.55);
+          background: rgba(127, 91, 255, 0.16);
+        }
+
+        .q-option:disabled {
+          opacity: 1;
         }
 
         .q-option-correct {
           border-color: rgba(34, 197, 94, 0.6);
           background: rgba(34, 197, 94, 0.14);
           color: #dfffea;
+        }
+
+        .q-option-wrong {
+          border-color: rgba(239, 68, 68, 0.7);
+          background: rgba(239, 68, 68, 0.16);
+          color: #ffe5e5;
         }
 
         .q-option-key {
@@ -606,6 +675,12 @@ export default function BiologyMcq() {
           transform: translateY(-2px);
         }
 
+        .pick-hint {
+          margin: 0;
+          font-size: 0.82rem;
+          color: #b4bbd6;
+        }
+
         .answer-reveal {
           background: rgba(119, 242, 255, 0.1);
           border: 1px solid rgba(119, 242, 255, 0.38);
@@ -614,6 +689,16 @@ export default function BiologyMcq() {
           display: grid;
           gap: 6px;
           animation: fadeIn 280ms ease;
+        }
+
+        .answer-reveal-correct {
+          background: rgba(34, 197, 94, 0.12);
+          border-color: rgba(34, 197, 94, 0.45);
+        }
+
+        .answer-reveal-wrong {
+          background: rgba(239, 68, 68, 0.12);
+          border-color: rgba(239, 68, 68, 0.45);
         }
 
         .a-label {
@@ -652,6 +737,36 @@ export default function BiologyMcq() {
           cursor: pointer;
           transition: all 180ms ease;
           justify-self: end;
+        }
+
+        .random-actions {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .back-random-btn {
+          appearance: none;
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          border-radius: 12px;
+          padding: 10px 14px;
+          font-family: inherit;
+          font-weight: 700;
+          font-size: 0.86rem;
+          background: rgba(255, 255, 255, 0.08);
+          color: #f3f2ff;
+          cursor: pointer;
+          transition: all 180ms ease;
+        }
+
+        .back-random-btn:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.15);
+        }
+
+        .back-random-btn:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
         }
 
         .next-btn:hover {
