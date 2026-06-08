@@ -32,6 +32,26 @@ const CHALLENGES = [
   "Finish one chapter recap before the end of the day."
 ];
 
+type SubjectMarks = {
+  subject: string;
+  exams: number[];
+};
+
+const SUBJECT_MARKS: SubjectMarks[] = [
+  {
+    subject: "Physics",
+    exams: [38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  },
+  {
+    subject: "Biology",
+    exams: [37, 0, 0, 0, 0, 0, 0]
+  },
+  // {
+  //   subject: "Chemistry",
+  //   exams: [0, 0, 0, 0, 0]
+  // }
+];
+
 type Countdown = {
   days: number;
   hours: number;
@@ -127,6 +147,24 @@ export default function Home() {
 
   const hourNow = new Date(now).getHours();
   const greeting = getGreeting(hourNow);
+
+  const subjectMarksSummary = useMemo(
+    () => SUBJECT_MARKS.map((item) => {
+      const total = item.exams.reduce((sum, mark) => sum + mark, 0);
+      const completedExamMarks = item.exams.filter((mark) => mark > 0);
+      const completedTotal = completedExamMarks.reduce((sum, mark) => sum + mark, 0);
+      const average = completedExamMarks.length > 0 ? completedTotal / completedExamMarks.length : 0;
+      // const averageOutOf100 = Math.min(100, average * 2);
+
+      return {
+        ...item,
+        total,
+        average,
+        completedExams: completedExamMarks.length
+      };
+    }),
+    []
+  );
 
   const badges = [
     {
@@ -261,6 +299,37 @@ export default function Home() {
             <PhysicsMcq />
             <BiologyMcq />
             <ChemistryMcq />
+          </div>
+        </section>
+
+        <section className="card reveal marks-status">
+          <div className="section-title-wrap">
+            <h2>📊 Current Marks Status</h2>
+            <p className="section-subtitle">Hardcoded exam marks with calculated totals and averages</p>
+          </div>
+          <div className="marks-grid">
+            {subjectMarksSummary.map((subject) => (
+              <article key={subject.subject} className="marks-card">
+                <div className="marks-head">
+                  <h3>{subject.subject}</h3>
+                  <span>{subject.completedExams}/{subject.exams.length} completed</span>
+                </div>
+                <div className="marks-meta">
+                  <p><strong>Total:</strong> {subject.total}</p>
+                  <p>
+                    <strong>Average:</strong>
+                    <span className="average-chip">{subject.average.toFixed(2)}</span>
+                  </p>
+                </div>
+                <div className="marks-chips">
+                  {subject.exams.map((mark, index) => (
+                    <span key={`${subject.subject}-${index}`} className="mark-chip">
+                      E{index + 1}: {mark}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -759,6 +828,80 @@ export default function Home() {
           gap: 12px;
         }
 
+        .marks-grid {
+          display: grid;
+          gap: 12px;
+        }
+
+        .marks-card {
+          background: rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 18px;
+          padding: 14px;
+          display: grid;
+          gap: 10px;
+        }
+
+        .marks-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+        }
+
+        .marks-head h3 {
+          margin: 0;
+          font-size: 1rem;
+          font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        }
+
+        .marks-head span {
+          color: #b4bbd6;
+          font-size: 0.82rem;
+        }
+
+        .marks-meta {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .marks-meta p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #e8e9ff;
+        }
+
+        .marks-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .mark-chip {
+          border: 1px solid rgba(255, 255, 255, 0.22);
+          border-radius: 999px;
+          padding: 4px 9px;
+          font-size: 0.76rem;
+          color: #cfd5fb;
+          background: rgba(127, 91, 255, 0.15);
+        }
+
+        .average-chip {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          margin-left: 4px;
+          padding: 3px 10px;
+          border-radius: 999px;
+          font-weight: 800;
+          letter-spacing: 0.01em;
+          color: #ffffff;
+          background: linear-gradient(95deg, #7f5bff, #3b82ff);
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          box-shadow: 0 8px 16px rgba(59, 130, 255, 0.24);
+        }
+
         .career-percent {
           font-size: 1.1rem;
           text-align: right;
@@ -837,6 +980,10 @@ export default function Home() {
           }
 
           .subjects-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+
+          .marks-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
           }
         }
