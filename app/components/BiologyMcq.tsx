@@ -32,7 +32,7 @@ const BIOLOGY_BATCHES: Batch[] = [
     id: "b1",
     label: "தொகுதி 1",
     units: "அலகு 1 & 2",
-    focus: "வாழ்வின் வேதியியல் அடிப்படை & செல் உயிரியல்",
+    focus: "வாழ்வின் இரசாயனவியல் அடிப்படை & செல் உயிரியல்",
     target: 50,
     durationSeconds: 7200,
     examQuestions: biologyBatch1ExamQuestions

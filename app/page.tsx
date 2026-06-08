@@ -58,7 +58,7 @@ function getProgressCaption(progress: number) {
 }
 
 function getEncouragement(daysRemaining: number) {
-  if (daysRemaining > 160) return "Ashali, your effort is compounding. Keep going.";
+  if (daysRemaining > 160) return "Ashalini, your effort is compounding. Keep going.";
   if (daysRemaining > 100) return "You are building exam confidence one focused hour at a time.";
   if (daysRemaining > 60) return "The plan is working. Stay consistent and trust yourself.";
   if (daysRemaining > 30) return "Small wins today become big results in August.";
@@ -199,32 +199,17 @@ export default function Home() {
           <div className="hero-layout">
             <div>
               <p className="greeting">
-                {greeting}, Ashali
+                {greeting}, Ashalini
               </p>
-              <h1>🎓 Ashali&apos;s A/L 2026 Mission</h1>
+              <h1>🎓 Ashalini&apos;s A/L 2026 Mission</h1>
               <p className="tagline">&quot;Today&apos;s effort is tomorrow&apos;s success.&quot;</p>
               <p className="encouragement">
-                Ashali, every study session brings you closer to your dream. Stay focused, trust the process, and make
+                Ashalini, every study session brings you closer to your dream. Stay focused, trust the process, and make
                 yourself proud. ❤️
                 {"\n\n"}
                 {getEncouragement(countdown.days)}
               </p>
             </div>
-
-            <figure className="hero-photo-wrap">
-              <div className="hero-photo-frame">
-                <Image
-                  src="/ashali.png"
-                  alt="Ashali visualized as a future doctor"
-                  width={620}
-                  height={760}
-                  priority
-                  className="hero-photo"
-                  style={{ borderRadius: "25px" }}
-                />
-              </div>
-              <figcaption className="hero-photo-caption">Future Dr. Ashali</figcaption>
-            </figure>
           </div>
         </section>
 
@@ -264,6 +249,18 @@ export default function Home() {
           <div className="progress-meta">
             <span className="progress-percent">{roundedProgress}%</span>
             <span className="progress-caption">{getProgressCaption(roundedProgress)}</span>
+          </div>
+        </section>
+
+        <section className="card reveal">
+          <div className="section-title-wrap">
+            <h2>📖 பாட MCQ பயிற்சி</h2>
+            <p className="section-subtitle">உயிரியல், இரசாயனவியல் & பெளதிகவியல் — தொகுதி வாரியாக கேள்விகள்</p>
+          </div>
+          <div className="subjects-grid">
+            <BiologyMcq />
+            <ChemistryMcq />
+            <PhysicsMcq />
           </div>
         </section>
 
@@ -338,23 +335,25 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="card reveal">
-          <div className="section-title-wrap">
-            <h2>📖 பாட MCQ பயிற்சி</h2>
-            <p className="section-subtitle">உயிரியல், வேதியியல் & இயற்பியல் — தொகுதி வாரியாக கேள்விகள்</p>
-          </div>
-          <div className="subjects-grid">
-            <BiologyMcq />
-            <ChemistryMcq />
-            <PhysicsMcq />
-          </div>
-        </section>
-
         <section className="card reveal career-card">
           <div>
             <h2>Future Career Loading...</h2>
             <p className="section-subtitle">Every focused day adds momentum to your future.</p>
           </div>
+          <figure className="hero-photo-wrap career-photo-wrap">
+            <div className="hero-photo-frame">
+              <Image
+                src="/ashali.png"
+                alt="Ashali visualized as a future doctor"
+                width={620}
+                height={760}
+                priority
+                className="hero-photo"
+                style={{ borderRadius: "25px" }}
+              />
+            </div>
+            <figcaption className="hero-photo-caption">Future Dr. Ashalini Murugaverl</figcaption>
+          </figure>
           <div className="career-loader">
             <div className="career-progress" style={{ width: `${careerProgress}%` }} />
           </div>
@@ -746,6 +745,15 @@ export default function Home() {
           gap: 12px;
         }
 
+        .career-photo-wrap {
+          max-width: 360px;
+          margin: 0 auto;
+        }
+
+        .career-card .hero-photo {
+          max-height: 320px;
+        }
+
         .subjects-grid {
           display: grid;
           gap: 12px;
@@ -796,7 +804,7 @@ export default function Home() {
           }
 
           .hero-layout {
-            grid-template-columns: 1.35fr 0.9fr;
+            grid-template-columns: 1fr;
             align-items: start;
           }
 

@@ -7,7 +7,7 @@ export default function ChemistryMcq() {
         <div className="subject-header">
           <span className="subject-icon" aria-hidden="true">⚗️</span>
           <div>
-            <h3 className="subject-name">வேதியியல் (Chemistry)</h3>
+            <h3 className="subject-name">இரசாயனவியல் (Chemistry)</h3>
             <p className="subject-meta">விரைவில் வரும் · MCQ பயிற்சி</p>
           </div>
         </div>
