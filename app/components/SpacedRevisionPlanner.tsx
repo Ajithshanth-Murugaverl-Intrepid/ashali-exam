@@ -261,164 +261,177 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
   };
 
   return (
-    <section className="card reveal spaced-card">
-      <div className="section-title-wrap">
-        <h2>Spaced Revision Planner</h2>
-        <p className="section-subtitle">Day 1 → Day 3 → Day 7 → Day 14 → Day 30 revision loop with local progress tracking</p>
-        {examStartDate && (
-          <p className="spaced-exam-line">
-            Exam timeline: {examStartDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
-            {examDaysLeft !== null && examDaysLeft >= 0 ? ` (${examDaysLeft} day${examDaysLeft === 1 ? "" : "s"} left)` : " (started)"}
-          </p>
-        )}
-      </div>
+    <section className="card reveal">
+      <div className="spaced-overlay">
+        <div className="section-title-wrap spaced-header">
+          <h2>Revision Planner</h2>
+          <p className="section-subtitle">Day 1 → Day 3 → Day 7 → Day 14 → Day 30 revision loop with local progress tracking</p>
+          {examStartDate && (
+            <p className="spaced-exam-line">
+              Exam timeline: {examStartDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+              {examDaysLeft !== null && examDaysLeft >= 0 ? ` (${examDaysLeft} day${examDaysLeft === 1 ? "" : "s"} left)` : " (started)"}
+            </p>
+          )}
+        </div>
 
-      <div className="spaced-summary-grid">
-        <article className="spaced-stat overdue">
-          <p>Overdue</p>
-          <strong>{summary.overdue}</strong>
-        </article>
-        <article className="spaced-stat due">
-          <p>Due Today</p>
-          <strong>{summary.dueToday}</strong>
-        </article>
-        <article className="spaced-stat upcoming">
-          <p>Upcoming</p>
-          <strong>{summary.upcoming}</strong>
-        </article>
-        <article className="spaced-stat completed">
-          <p>Completed</p>
-          <strong>{summary.completed}</strong>
-        </article>
-        <article className="spaced-stat risk">
-          <p>At Risk</p>
-          <strong>{summary.atRisk}</strong>
-        </article>
-      </div>
+        <div className="spaced-summary-grid">
+          <article className="spaced-stat overdue">
+            <p>Overdue</p>
+            <strong>{summary.overdue}</strong>
+          </article>
+          <article className="spaced-stat due">
+            <p>Due Today</p>
+            <strong>{summary.dueToday}</strong>
+          </article>
+          <article className="spaced-stat upcoming">
+            <p>Upcoming</p>
+            <strong>{summary.upcoming}</strong>
+          </article>
+          <article className="spaced-stat completed">
+            <p>Completed</p>
+            <strong>{summary.completed}</strong>
+          </article>
+          <article className="spaced-stat risk">
+            <p>At Risk</p>
+            <strong>{summary.atRisk}</strong>
+          </article>
+        </div>
 
-      <div className="spaced-add-grid">
-        <input
-          className="spaced-input"
-          type="text"
-          value={topicTitle}
-          onChange={(event) => setTopicTitle(event.target.value)}
-          placeholder="Topic name (e.g. Thermodynamics)"
-        />
-        <select
-          className="spaced-input"
-          value={subject}
-          onChange={(event) => {
-            const next = event.target.value;
-            if (SUBJECT_OPTIONS.includes(next as SubjectOption)) {
-              setSubject(next as SubjectOption);
-            }
-          }}
-        >
-          <option value="Physics">Physics</option>
-          <option value="Biology">Biology</option>
-          <option value="Chemistry">Chemistry</option>
-        </select>
-        <input
-          className="spaced-input"
-          type="date"
-          value={studiedOn}
-          onChange={(event) => setStudiedOn(event.target.value)}
-        />
-        <button className="spaced-btn" type="button" onClick={addTopic}>Add Topic</button>
-      </div>
+        <div className="spaced-add-grid">
+          <input
+            className="spaced-input"
+            type="text"
+            value={topicTitle}
+            onChange={(event) => setTopicTitle(event.target.value)}
+            placeholder="Topic name (e.g. Thermodynamics)"
+          />
+          <select
+            className="spaced-input"
+            value={subject}
+            onChange={(event) => {
+              const next = event.target.value;
+              if (SUBJECT_OPTIONS.includes(next as SubjectOption)) {
+                setSubject(next as SubjectOption);
+              }
+            }}
+          >
+            <option value="Physics">Physics</option>
+            <option value="Biology">Biology</option>
+            <option value="Chemistry">Chemistry</option>
+          </select>
+          <input
+            className="spaced-input"
+            type="date"
+            value={studiedOn}
+            onChange={(event) => setStudiedOn(event.target.value)}
+          />
+          <button className="spaced-btn" type="button" onClick={addTopic}>Add Topic</button>
+        </div>
 
-      <div className="spaced-list">
-        {sortedTopics.length === 0 && (
-          <p className="spaced-empty">No topics yet. Add your first topic and the system will schedule all revision checkpoints automatically.</p>
-        )}
+        <div className="spaced-list">
+          {sortedTopics.length === 0 && (
+            <p className="spaced-empty">No topics yet. Add your first topic and the system will schedule all revision checkpoints automatically.</p>
+          )}
 
-        {sortedTopics.map(({ topic, info }) => {
-          const progressCount = topic.completedStepIndexes.filter((stepIndex) => stepIndex > 0).length;
-          const pendingAfterExamCount = getPendingAfterExamCount(topic, examStartDate);
-          const dueLabel = info.dueDate
-            ? info.dueDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-            : "-";
-          const dueStepLabel = info.nextStepIndex !== null ? STEP_LABELS[info.nextStepIndex] : null;
-          const dueInLabel =
-            info.dayDelta !== null && info.dayDelta > 0
-              ? `${info.dayDelta} day${info.dayDelta === 1 ? "" : "s"} left`
-              : info.dayDelta === 0
-                ? "Today"
-                : info.dayDelta !== null && info.dayDelta < 0
-                  ? `${Math.abs(info.dayDelta)} day${Math.abs(info.dayDelta) === 1 ? "" : "s"} overdue`
-                  : null;
+          {sortedTopics.map(({ topic, info }) => {
+            const progressCount = topic.completedStepIndexes.filter((stepIndex) => stepIndex > 0).length;
+            const pendingAfterExamCount = getPendingAfterExamCount(topic, examStartDate);
+            const dueLabel = info.dueDate
+              ? info.dueDate.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+              : "-";
+            const dueStepLabel = info.nextStepIndex !== null ? STEP_LABELS[info.nextStepIndex] : null;
+            const dueInLabel =
+              info.dayDelta !== null && info.dayDelta > 0
+                ? `${info.dayDelta} day${info.dayDelta === 1 ? "" : "s"} left`
+                : info.dayDelta === 0
+                  ? "Today"
+                  : info.dayDelta !== null && info.dayDelta < 0
+                    ? `${Math.abs(info.dayDelta)} day${Math.abs(info.dayDelta) === 1 ? "" : "s"} overdue`
+                    : null;
 
-          return (
-            <article key={topic.id} className="spaced-item">
-              <div className="spaced-item-head">
-                <div>
-                  <h3>{topic.title}</h3>
-                  <p>{topic.subject} · Studied on {topic.studiedOn}</p>
+            return (
+              <article key={topic.id} className="spaced-item">
+                <div className="spaced-item-head">
+                  <div>
+                    <h3>{topic.title}</h3>
+                    <p>{topic.subject} · Studied on {topic.studiedOn}</p>
+                  </div>
+                  <span className={`spaced-status ${info.status}`}>
+                    {info.status === "overdue" && "Overdue"}
+                    {info.status === "due-today" && "Due Today"}
+                    {info.status === "upcoming" && "Upcoming"}
+                    {info.status === "completed" && "Completed"}
+                  </span>
                 </div>
-                <span className={`spaced-status ${info.status}`}>
-                  {info.status === "overdue" && "Overdue"}
-                  {info.status === "due-today" && "Due Today"}
-                  {info.status === "upcoming" && "Upcoming"}
-                  {info.status === "completed" && "Completed"}
-                </span>
-              </div>
 
-              {info.nextStepIndex === null ? (
-                <p className="spaced-next">All scheduled revisions complete.</p>
-              ) : (
-                <div className="spaced-next-row">
-                  <p className="spaced-next-label">Next Session: {dueStepLabel}</p>
-                  <div className="spaced-next-date-wrap">
-                    <span className="spaced-next-date">{dueLabel}</span>
-                    {dueInLabel && <span className="spaced-next-meta">{dueInLabel}</span>}
+                {info.nextStepIndex === null ? (
+                  <p className="spaced-next">All scheduled revisions complete.</p>
+                ) : (
+                  <div className="spaced-next-row">
+                    <p className="spaced-next-label">Next Session: {dueStepLabel}</p>
+                    <div className="spaced-next-date-wrap">
+                      <span className="spaced-next-date">{dueLabel}</span>
+                      {dueInLabel && <span className="spaced-next-meta">{dueInLabel}</span>}
+                    </div>
+                  </div>
+                )}
+
+                {examStartDate && pendingAfterExamCount > 0 && (
+                  <p className="spaced-risk-note">
+                    {pendingAfterExamCount} pending revision{pendingAfterExamCount === 1 ? "" : "s"} fall after exam start. Prioritize this topic.
+                  </p>
+                )}
+
+                <div className="spaced-steps">
+                  {STEP_LABELS.map((label, index) => {
+                    const stepDate = getStepDate(topic, index);
+                    const isDone = topic.completedStepIndexes.includes(index);
+                    return (
+                      <span key={`${topic.id}-${label}`} className={`step-pill ${isDone ? "done" : "pending"}`}>
+                        {label}: {stepDate ? formatAsInputDate(stepDate) : "-"}
+                      </span>
+                    );
+                  })}
+                </div>
+
+                <div className="spaced-item-foot">
+                  <p className="spaced-progress">Revisions done: {progressCount}/4</p>
+                  <div className="spaced-actions">
+                    <button className="spaced-btn" type="button" onClick={() => markNextDone(topic.id)}>
+                      Mark Next Done
+                    </button>
+                    <button className="spaced-btn alt" type="button" onClick={() => undoLastRevision(topic.id)}>
+                      Undo Last
+                    </button>
+                    <button className="spaced-btn alt" type="button" onClick={() => restartPlanFromToday(topic.id)}>
+                      Restart From Today
+                    </button>
+                    <button className="spaced-btn alt" type="button" onClick={() => removeTopic(topic.id)}>
+                      Delete
+                    </button>
                   </div>
                 </div>
-              )}
-
-              {examStartDate && pendingAfterExamCount > 0 && (
-                <p className="spaced-risk-note">
-                  {pendingAfterExamCount} pending revision{pendingAfterExamCount === 1 ? "" : "s"} fall after exam start. Prioritize this topic.
-                </p>
-              )}
-
-              <div className="spaced-steps">
-                {STEP_LABELS.map((label, index) => {
-                  const stepDate = getStepDate(topic, index);
-                  const isDone = topic.completedStepIndexes.includes(index);
-                  return (
-                    <span key={`${topic.id}-${label}`} className={`step-pill ${isDone ? "done" : "pending"}`}>
-                      {label}: {stepDate ? formatAsInputDate(stepDate) : "-"}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="spaced-item-foot">
-                <p className="spaced-progress">Revisions done: {progressCount}/4</p>
-                <div className="spaced-actions">
-                  <button className="spaced-btn" type="button" onClick={() => markNextDone(topic.id)}>
-                    Mark Next Done
-                  </button>
-                  <button className="spaced-btn alt" type="button" onClick={() => undoLastRevision(topic.id)}>
-                    Undo Last
-                  </button>
-                  <button className="spaced-btn alt" type="button" onClick={() => restartPlanFromToday(topic.id)}>
-                    Restart From Today
-                  </button>
-                  <button className="spaced-btn alt" type="button" onClick={() => removeTopic(topic.id)}>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+              </article>
+            );
+          })}
+        </div>
       </div>
 
       <style jsx>{`
-        .spaced-card {
+        .spaced-overlay {
           display: grid;
           gap: 14px;
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          background: rgba(255, 255, 255, 0.06);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+          padding: 14px;
+        }
+
+        .spaced-header {
+          margin: 0;
+          padding-bottom: 10px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.14);
         }
 
         .spaced-summary-grid {
@@ -429,7 +442,7 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
 
         .spaced-exam-line {
           margin: 8px 0 0;
-          color: #ffe9a6;
+          color: #b4bbd6;
           font-size: 0.85rem;
         }
 
@@ -720,6 +733,10 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
         }
 
         @media (min-width: 720px) {
+          .spaced-overlay {
+            padding: 16px;
+          }
+
           .spaced-summary-grid {
             grid-template-columns: repeat(5, minmax(0, 1fr));
           }

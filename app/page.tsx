@@ -370,6 +370,12 @@ export default function Home() {
             <span className="progress-percent">{examCompletionProgress}%</span>
             <span className="progress-caption">{completedExamsCount}/{totalExamsCount} exams completed</span>
           </div>
+
+          <br/>
+
+
+
+        <SpacedRevisionPlanner examStartIso={EXAM_DATE} />
         </section>
 
         <section className="card reveal">
@@ -383,8 +389,6 @@ export default function Home() {
             <ChemistryMcq />
           </div>
         </section>
-
-        <SpacedRevisionPlanner examStartIso={EXAM_DATE} />
 
         <section className="card reveal marks-status">
           <div className="section-title-wrap">
