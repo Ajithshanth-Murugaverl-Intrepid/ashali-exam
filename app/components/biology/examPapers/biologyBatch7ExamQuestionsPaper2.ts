@@ -1,4 +1,4 @@
-import { type ExamQuestion } from "./ExamModule";
+import { type ExamQuestion } from "../../ExamModule";
 
 // NOTE: `answer` is a 0-based option index.
 export const biologyBatch7ExamQuestionsPaper2: ExamQuestion[] = [

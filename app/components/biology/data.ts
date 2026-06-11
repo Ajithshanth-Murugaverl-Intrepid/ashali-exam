@@ -1,11 +1,11 @@
-import { biologyBatch1ExamQuestionsPaper1 } from "../biologyBatch1ExamQuestionsPaper1";
-import { biologyBatch2ExamQuestionsPaper1 } from "../biologyBatch2ExamQuestionsPaper1";
-import { biologyBatch3ExamQuestionsPaper1 } from "../biologyBatch3ExamQuestionsPaper1";
-import { biologyBatch4ExamQuestionsPaper1 } from "../biologyBatch4ExamQuestionsPaper1";
-import { biologyBatch5ExamQuestionsPaper1 } from "../biologyBatch5ExamQuestionsPaper1";
-import { biologyBatch6ExamQuestionsPaper1 } from "../biologyBatch6ExamQuestionsPaper1";
-import { biologyBatch7ExamQuestionsPaper1 } from "../biologyBatch7ExamQuestionsPaper1";
-import { biologyBatch7ExamQuestionsPaper2 } from "../biologyBatch7ExamQuestionsPaper2";
+import { biologyBatch1ExamQuestionsPaper1 } from "./examPapers/biologyBatch1ExamQuestionsPaper1";
+import { biologyBatch2ExamQuestionsPaper1 } from "./examPapers/biologyBatch2ExamQuestionsPaper1";
+import { biologyBatch3ExamQuestionsPaper1 } from "./examPapers/biologyBatch3ExamQuestionsPaper1";
+import { biologyBatch4ExamQuestionsPaper1 } from "./examPapers/biologyBatch4ExamQuestionsPaper1";
+import { biologyBatch5ExamQuestionsPaper1 } from "./examPapers/biologyBatch5ExamQuestionsPaper1";
+import { biologyBatch6ExamQuestionsPaper1 } from "./examPapers/biologyBatch6ExamQuestionsPaper1";
+import { biologyBatch7ExamQuestionsPaper1 } from "./examPapers/biologyBatch7ExamQuestionsPaper1";
+import { biologyBatch7ExamQuestionsPaper2 } from "./examPapers/biologyBatch7ExamQuestionsPaper2";
 import { type Batch } from "../mcq/types";
 
 export const BIOLOGY_BATCHES: Batch[] = [

@@ -1,4 +1,4 @@
-import { type ExamQuestion } from "./ExamModule";
+import { type ExamQuestion } from "../../ExamModule";
 
 // NOTE: `answer` is a 0-based option index.
 // Example: option 1 -> 0, option 2 -> 1, option 3 -> 2, option 4 -> 3, option 5 -> 4.

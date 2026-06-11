@@ -1,10 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import BiologyMcq from "./components/BiologyMcq";
 import ChemistryMcq from "./components/ChemistryMcq";
 import PhysicsMcq from "./components/PhysicsMcq";
+
+const SpacedRevisionPlanner = dynamic(() => import("./components/SpacedRevisionPlanner"), {
+  ssr: false
+});
 
 const EXAM_DATE = "2026-08-10T13:00:00+05:30";
 const PREPARATION_START = "2025-01-01T00:00:00+05:30";
@@ -378,6 +383,8 @@ export default function Home() {
             <ChemistryMcq />
           </div>
         </section>
+
+        <SpacedRevisionPlanner examStartIso={EXAM_DATE} />
 
         <section className="card reveal marks-status">
           <div className="section-title-wrap">
