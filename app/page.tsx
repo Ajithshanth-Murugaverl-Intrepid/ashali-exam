@@ -50,8 +50,8 @@ type ExamMarkEntry = {
 
 const EXAM_MARK_ENTRIES: ExamMarkEntry[] = [
   { subject: "Physics", examCode: "PHY-B1-E1", maxMark: 50, mark: 38 },
-  { subject: "Physics", examCode: "PHY-B2-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B2-E2", maxMark: 50, mark: 0 },
+  { subject: "Physics", examCode: "PHY-B2-E1", maxMark: 50, mark: 33 },
+  { subject: "Physics", examCode: "PHY-B2-E2", maxMark: 50, mark: 32 },
   { subject: "Physics", examCode: "PHY-B2-E3", maxMark: 50, mark: 0 },
   { subject: "Physics", examCode: "PHY-B2-E4", maxMark: 50, mark: 0 },
   { subject: "Physics", examCode: "PHY-B2-E5", maxMark: 50, mark: 0 },
