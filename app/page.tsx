@@ -4,6 +4,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { EXAM_CATALOG } from "./lib/study-data";
 import {
   EXAM_RESULTS_UPDATED_EVENT,
@@ -96,6 +97,7 @@ function getEncouragement(daysRemaining: number, userDisplayName: string) {
 export default function Home() {
   const router = useRouter();
   const { signOut, user } = useAuth();
+  const supabase = useMemo(() => createClient(), []);
   const examMs = useMemo(() => new Date(EXAM_DATE).getTime(), []);
   const prepStartMs = useMemo(() => new Date(PREPARATION_START).getTime(), []);
 
@@ -103,6 +105,14 @@ export default function Home() {
   const [quoteIndex, setQuoteIndex] = useState(2);
   const [challengeIndex, setChallengeIndex] = useState(1);
   const [examResults, setExamResults] = useState<StoredExamResult[]>([]);
+  const [settingsName, setSettingsName] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+  const [settingsSuccess, setSettingsSuccess] = useState<string | null>(null);
+  const [nameSaving, setNameSaving] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
 
   const userDisplayName =
     user?.user_metadata?.full_name?.trim() ||
@@ -113,6 +123,62 @@ export default function Home() {
     await signOut();
     router.replace("/login");
     router.refresh();
+  }
+
+  async function handleNameUpdate(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSettingsError(null);
+    setSettingsSuccess(null);
+
+    const nextName = settingsName.trim();
+    if (!nextName) {
+      setSettingsError("Name cannot be empty.");
+      return;
+    }
+
+    setNameSaving(true);
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: nextName },
+    });
+
+    if (error) {
+      setSettingsError(error.message);
+    } else {
+      setSettingsSuccess("Name updated successfully.");
+    }
+
+    setNameSaving(false);
+  }
+
+  async function handlePasswordUpdate(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSettingsError(null);
+    setSettingsSuccess(null);
+
+    if (newPassword.length < 8) {
+      setSettingsError("Password must be at least 8 characters.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setSettingsError("Passwords do not match.");
+      return;
+    }
+
+    setPasswordSaving(true);
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      setSettingsError(error.message);
+    } else {
+      setNewPassword("");
+      setConfirmPassword("");
+      setSettingsSuccess("Password updated successfully.");
+    }
+
+    setPasswordSaving(false);
   }
 
   const particles = useMemo(
@@ -180,6 +246,10 @@ export default function Home() {
       }
     };
   }, [user]);
+
+  useEffect(() => {
+    setSettingsName(user?.user_metadata?.full_name?.trim() || "");
+  }, [user?.id, user?.user_metadata?.full_name]);
 
   const diff = Math.max(0, examMs - now);
   const totalSeconds = Math.floor(diff / 1000);
@@ -553,6 +623,76 @@ export default function Home() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="card reveal settings-card">
+          <div className="section-title-wrap">
+            <h2>⚙️ Account Settings</h2>
+            <p className="section-subtitle">Update your profile name and password</p>
+          </div>
+
+          <div className="settings-grid">
+            <form onSubmit={handleNameUpdate} className="settings-form">
+              <label htmlFor="settings-name">Full name</label>
+              <input
+                id="settings-name"
+                type="text"
+                value={settingsName}
+                onChange={(event) => setSettingsName(event.target.value)}
+                className="settings-input"
+                placeholder="Your full name"
+                autoComplete="name"
+                required
+              />
+              <button type="submit" className="settings-btn" disabled={nameSaving}>
+                {nameSaving ? "Saving..." : "Update Name"}
+              </button>
+            </form>
+
+            <form onSubmit={handlePasswordUpdate} className="settings-form">
+              <label htmlFor="settings-password">New password</label>
+              <div className="settings-password-wrap">
+                <input
+                  id="settings-password"
+                  type={showPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  className="settings-input settings-input-password"
+                  placeholder="Enter new password"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              <label htmlFor="settings-password-confirm">Confirm password</label>
+              <input
+                id="settings-password-confirm"
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                className="settings-input"
+                placeholder="Confirm new password"
+                autoComplete="new-password"
+                minLength={8}
+                required
+              />
+
+              <button type="submit" className="settings-btn" disabled={passwordSaving}>
+                {passwordSaving ? "Saving..." : "Update Password"}
+              </button>
+            </form>
+          </div>
+
+          {settingsError && <p className="settings-message error">{settingsError}</p>}
+          {settingsSuccess && <p className="settings-message success">{settingsSuccess}</p>}
         </section>
 
         {/* <section className="card reveal career-card">
@@ -1074,6 +1214,111 @@ export default function Home() {
           gap: 12px;
         }
 
+        .settings-card {
+          display: grid;
+          gap: 12px;
+        }
+
+        .settings-grid {
+          display: grid;
+          gap: 12px;
+        }
+
+        .settings-form {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 16px;
+          padding: 14px;
+          display: grid;
+          gap: 8px;
+        }
+
+        .settings-form label {
+          margin: 0;
+          font-size: 0.82rem;
+          color: #cfd5fb;
+        }
+
+        .settings-input {
+          width: 100%;
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          background: rgba(3, 7, 20, 0.38);
+          color: #f3f2ff;
+          border-radius: 12px;
+          padding: 10px 12px;
+          font-family: inherit;
+          font-size: 0.92rem;
+        }
+
+        .settings-input:focus {
+          outline: none;
+          border-color: rgba(119, 242, 255, 0.55);
+        }
+
+        .settings-password-wrap {
+          position: relative;
+        }
+
+        .settings-input-password {
+          padding-right: 72px;
+        }
+
+        .toggle-password {
+          position: absolute;
+          top: 50%;
+          right: 8px;
+          transform: translateY(-50%);
+          border: 0;
+          border-radius: 8px;
+          padding: 5px 9px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          background: rgba(127, 91, 255, 0.28);
+          color: #ffffff;
+          cursor: pointer;
+        }
+
+        .toggle-password:hover {
+          background: rgba(127, 91, 255, 0.42);
+        }
+
+        .settings-btn {
+          appearance: none;
+          border: 0;
+          border-radius: 10px;
+          padding: 10px 12px;
+          background: linear-gradient(95deg, #7f5bff, #3b82ff);
+          color: #ffffff;
+          font-family: inherit;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .settings-btn:disabled {
+          opacity: 0.65;
+          cursor: not-allowed;
+        }
+
+        .settings-message {
+          margin: 0;
+          border-radius: 12px;
+          padding: 10px 12px;
+          font-size: 0.85rem;
+          border: 1px solid transparent;
+        }
+
+        .settings-message.error {
+          color: #ffd0d0;
+          background: rgba(244, 63, 94, 0.14);
+          border-color: rgba(244, 63, 94, 0.35);
+        }
+
+        .settings-message.success {
+          color: #dcfce7;
+          background: rgba(34, 197, 94, 0.16);
+          border-color: rgba(134, 239, 172, 0.4);
+        }
+
         .marks-grid {
           display: grid;
           gap: 12px;
@@ -1320,6 +1565,10 @@ export default function Home() {
 
           .subjects-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+
+          .settings-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
 
           .marks-grid {

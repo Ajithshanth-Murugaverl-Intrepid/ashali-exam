@@ -7,10 +7,9 @@ import { useState } from "react";
 export default function LoginPage() {
   const supabase = createClient();
   const router = useRouter();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -19,36 +18,16 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    if (mode === "signup") {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: name } },
-      });
-
-      if (signUpError) {
-        setError(signUpError.message);
-      } else if (!data.session) {
-        setError(
-          "Email confirmation is still enabled in Supabase. Turn off 'Confirm email' in Auth settings for instant signup."
-        );
-      } else {
-        router.replace("/");
-        router.refresh();
-        return;
-      }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      setError(error.message);
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        setError(error.message);
-      } else {
-        router.replace("/");
-        router.refresh();
-        return;
-      }
+      router.replace("/");
+      router.refresh();
+      return;
     }
 
     setLoading(false);
@@ -64,31 +43,13 @@ export default function LoginPage() {
             A/L Exam Portal
           </h1>
           <p className="text-sm text-white/50 mt-1">
-            {mode === "signin" ? "Sign in to sync your progress" : "Create your account"}
+            Sign in to sync your progress
           </p>
         </div>
 
         {/* Card */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5">
-          {/* Email/password form */}
           <form onSubmit={handleSubmit} className="space-y-3">
-            {mode === "signup" && (
-              <div>
-                <label className="block text-xs text-white/50 mb-1">
-                  Full name
-                </label>
-                <input
-                  type="text"
-                  autoComplete="name"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-white/8 border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors"
-                  placeholder="Your full name"
-                />
-              </div>
-            )}
-
             <div>
               <label className="block text-xs text-white/50 mb-1">Email</label>
               <input
@@ -106,18 +67,27 @@ export default function LoginPage() {
               <label className="block text-xs text-white/50 mb-1">
                 Password
               </label>
-              <input
-                type="password"
-                autoComplete={
-                  mode === "signup" ? "new-password" : "current-password"
-                }
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white/8 border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  autoComplete={
+                    "current-password"
+                  }
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 pr-16 rounded-xl bg-white/8 border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-indigo-300 hover:text-indigo-200"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
 
             {error && (
@@ -131,36 +101,21 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-sm transition-colors"
             >
-              {loading
-                ? "Please wait…"
-                : mode === "signin"
-                ? "Sign in"
-                : "Create account"}
+              {loading ? "Please wait…" : "Sign in"}
             </button>
           </form>
 
-          <p className="text-center text-xs text-white/40">
-            {mode === "signin" ? (
-              <>
-                No account?{" "}
-                <button
-                  onClick={() => { setMode("signup"); setError(null); }}
-                  className="text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  Sign up
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <button
-                  onClick={() => { setMode("signin"); setError(null); }}
-                  className="text-indigo-400 hover:text-indigo-300 transition-colors"
-                >
-                  Sign in
-                </button>
-              </>
-            )}
+          <p className="text-center text-xs text-white/50 leading-5">
+            New accounts are created by admin only.
+            <br />
+            Contact{" "}
+            <a
+              href="mailto:ajithshanth.m@gmail.com"
+              className="text-indigo-300 hover:text-indigo-200 underline underline-offset-2"
+            >
+              ajithshanth.m@gmail.com
+            </a>{" "}
+            to become a user.
           </p>
         </div>
       </div>
