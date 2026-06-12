@@ -2,7 +2,16 @@
 
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { EXAM_CATALOG } from "./lib/study-data";
+import {
+  EXAM_RESULTS_UPDATED_EVENT,
+  fetchExamResults,
+  syncExamCatalog,
+  type StoredExamResult
+} from "./lib/study-db";
+import { useAuth } from "./lib/auth-context";
 import BiologyMcq from "./components/BiologyMcq";
 import ChemistryMcq from "./components/ChemistryMcq";
 import PhysicsMcq from "./components/PhysicsMcq";
@@ -46,46 +55,6 @@ const EXAM_TIMETABLE = [
   { paper: "Chemistry II", date: "24 Aug (Mon)", time: "8:30 AM - 11:40 AM", startAt: "2026-08-24T08:30:00+05:30" }
 ];
 
-type ExamMarkEntry = {
-  subject: string;
-  examCode: string;
-  maxMark: number;
-  mark: number;
-};
-
-const EXAM_MARK_ENTRIES: ExamMarkEntry[] = [
-  { subject: "Physics", examCode: "PHY-B1-E1", maxMark: 50, mark: 38 },
-  { subject: "Physics", examCode: "PHY-B2-E1", maxMark: 50, mark: 33 },
-  { subject: "Physics", examCode: "PHY-B2-E2", maxMark: 50, mark: 32 },
-  { subject: "Physics", examCode: "PHY-B2-E3", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B2-E4", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B2-E5", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B3-E1", maxMark: 50, mark: 30 },
-  { subject: "Physics", examCode: "PHY-B3-E2", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B3-E3", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B3-E4", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B4-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B5-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B6-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B7-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B8-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B9-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B10-E1", maxMark: 50, mark: 0 },
-  { subject: "Physics", examCode: "PHY-B11-E1", maxMark: 50, mark: 0 },
-
-  { subject: "Biology", examCode: "BIO-B1-E1", maxMark: 50, mark: 37 },
-  { subject: "Biology", examCode: "BIO-B2-E1", maxMark: 50, mark: 0 },
-  { subject: "Biology", examCode: "BIO-B3-E1", maxMark: 50, mark: 0 },
-  { subject: "Biology", examCode: "BIO-B4-E1", maxMark: 50, mark: 0 },
-  { subject: "Biology", examCode: "BIO-B5-E1", maxMark: 50, mark: 0 },
-  { subject: "Biology", examCode: "BIO-B6-E1", maxMark: 50, mark: 0 },
-  { subject: "Biology", examCode: "BIO-B7-E1", maxMark: 50, mark: 0 },
-  { subject: "Biology", examCode: "BIO-B7-E2", maxMark: 50, mark: 0 }
-
-  // { subject: "Chemistry", examCode: "CHE-B1-E1", maxMark: 50, mark: 0 },
-  // Add future exam papers here with examCode and mark.
-];
-
 type Countdown = {
   days: number;
   hours: number;
@@ -116,8 +85,8 @@ function getGreeting(hour: number) {
   return "Good Evening";
 }
 
-function getEncouragement(daysRemaining: number) {
-  if (daysRemaining > 160) return "Ashalini, your effort is compounding. Keep going.";
+function getEncouragement(daysRemaining: number, userDisplayName: string) {
+  if (daysRemaining > 160) return `${userDisplayName}, your effort is compounding. Keep going.`;
   if (daysRemaining > 100) return "You are building exam confidence one focused hour at a time.";
   if (daysRemaining > 60) return "The plan is working. Stay consistent and trust yourself.";
   if (daysRemaining > 30) return "Small wins today become big results in August.";
@@ -125,12 +94,26 @@ function getEncouragement(daysRemaining: number) {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const { signOut, user } = useAuth();
   const examMs = useMemo(() => new Date(EXAM_DATE).getTime(), []);
   const prepStartMs = useMemo(() => new Date(PREPARATION_START).getTime(), []);
 
   const [now, setNow] = useState(prepStartMs);
   const [quoteIndex, setQuoteIndex] = useState(2);
   const [challengeIndex, setChallengeIndex] = useState(1);
+  const [examResults, setExamResults] = useState<StoredExamResult[]>([]);
+
+  const userDisplayName =
+    user?.user_metadata?.full_name?.trim() ||
+    user?.email?.split("@")[0] ||
+    "Student";
+
+  async function handleLogout() {
+    await signOut();
+    router.replace("/login");
+    router.refresh();
+  }
 
   const particles = useMemo(
     () =>
@@ -164,6 +147,40 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadExamState() {
+      if (!user) {
+        setExamResults([]);
+        return;
+      }
+
+      await syncExamCatalog(EXAM_CATALOG);
+      const nextResults = await fetchExamResults(user.id);
+      if (!cancelled) {
+        setExamResults(nextResults);
+      }
+    }
+
+    void loadExamState();
+
+    const handleResultsUpdated = () => {
+      void loadExamState();
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener(EXAM_RESULTS_UPDATED_EVENT, handleResultsUpdated);
+    }
+
+    return () => {
+      cancelled = true;
+      if (typeof window !== "undefined") {
+        window.removeEventListener(EXAM_RESULTS_UPDATED_EVENT, handleResultsUpdated);
+      }
+    };
+  }, [user]);
+
   const diff = Math.max(0, examMs - now);
   const totalSeconds = Math.floor(diff / 1000);
 
@@ -183,8 +200,13 @@ export default function Home() {
   const prepTimelineProgress = Math.min(100, Math.max(0, (prepElapsed / prepTotal) * 100));
   const roundedTimelineProgress = Math.round(prepTimelineProgress);
 
-  const completedExamsCount = EXAM_MARK_ENTRIES.filter((exam) => exam.mark > 0).length;
-  const totalExamsCount = EXAM_MARK_ENTRIES.length;
+  const resultsByExamCode = useMemo(
+    () => new Map(examResults.map((result) => [result.examCode, result])),
+    [examResults]
+  );
+
+  const completedExamsCount = examResults.length;
+  const totalExamsCount = EXAM_CATALOG.length;
   const examCompletionProgress = totalExamsCount > 0
     ? Math.round((completedExamsCount / totalExamsCount) * 100)
     : 0;
@@ -196,36 +218,51 @@ export default function Home() {
 
   const subjectMarksSummary = useMemo(
     () => {
-      const grouped = EXAM_MARK_ENTRIES.reduce<Record<string, ExamMarkEntry[]>>((acc, entry) => {
+      const subjectOrder: Record<string, number> = {
+        Physics: 0,
+        Biology: 1,
+        Chemistry: 2
+      };
+
+      const grouped = EXAM_CATALOG.reduce<Record<string, typeof EXAM_CATALOG>>((acc, entry) => {
         if (!acc[entry.subject]) acc[entry.subject] = [];
         acc[entry.subject].push(entry);
         return acc;
       }, {});
 
-      return Object.entries(grouped).map(([subject, exams]) => {
-        const completedExams = exams.filter((exam) => exam.mark > 0);
-        const total = exams.reduce((sum, exam) => sum + exam.mark, 0);
-        const completedTotal = completedExams.reduce((sum, exam) => sum + exam.mark, 0);
-        const completedMaxTotal = completedExams.reduce((sum, exam) => sum + exam.maxMark, 0);
-        const completionRate = exams.length > 0 ? (completedExams.length / exams.length) * 100 : 0;
-        const averageOutOf100 = completedExams.length > 0
-          ? completedExams.reduce((sum, exam) => sum + ((exam.mark / exam.maxMark) * 100), 0) / completedExams.length
-          : 0;
+      return Object.entries(grouped)
+        .map(([subject, exams]) => {
+          const examsWithResults = exams.map((exam) => ({
+            ...exam,
+            result: resultsByExamCode.get(exam.examCode) ?? null
+          }));
+          const completedExams = examsWithResults.filter((exam) => exam.result !== null);
+          const completedTotal = completedExams.reduce((sum, exam) => sum + (exam.result?.score ?? 0), 0);
+          const completedMaxTotal = completedExams.reduce((sum, exam) => sum + (exam.result?.maxMark ?? 0), 0);
+          const completionRate = exams.length > 0 ? (completedExams.length / exams.length) * 100 : 0;
+          const averageOutOf100 = completedExams.length > 0
+            ? completedExams.reduce((sum, exam) => sum + (exam.result?.percentage ?? 0), 0) / completedExams.length
+            : 0;
 
-        return {
-          subject,
-          exams,
-          total,
-          completedTotal,
-          completedMaxTotal,
-          completionRate,
-          averageOutOf100,
-          completedExamsCount: completedExams.length,
-          totalExamsCount: exams.length
-        };
-      });
+          return {
+            subject,
+            exams: examsWithResults,
+            total: completedTotal,
+            completedTotal,
+            completedMaxTotal,
+            completionRate,
+            averageOutOf100,
+            completedExamsCount: completedExams.length,
+            totalExamsCount: exams.length
+          };
+        })
+        .sort((a, b) => {
+          const aRank = subjectOrder[a.subject] ?? Number.MAX_SAFE_INTEGER;
+          const bRank = subjectOrder[b.subject] ?? Number.MAX_SAFE_INTEGER;
+          return aRank - bRank;
+        });
     },
-    []
+    [resultsByExamCode]
   );
 
   const badges = [
@@ -298,16 +335,21 @@ export default function Home() {
         <section className="card reveal hero">
           <div className="hero-layout">
             <div>
+              <div className="hero-topbar">
+                <button className="logout-button" onClick={handleLogout} type="button">
+                  Log out
+                </button>
+              </div>
               <p className="greeting">
-                {greeting}, Ashalini
+                {greeting}, {userDisplayName}
               </p>
-              <h1>🎓 Ashalini&apos;s A/L 2026 Mission</h1>
+              <h1>🎓 {userDisplayName}&apos;s A/L 2026 Mission</h1>
               <p className="tagline">&quot;Today&apos;s effort is tomorrow&apos;s success.&quot;</p>
               <p className="encouragement">
-                Ashalini, every study session brings you closer to your dream. Stay focused, trust the process, and make
+                {userDisplayName}, every study session brings you closer to your dream. Stay focused, trust the process, and make
                 yourself proud. ❤️
                 {"\n\n"}
-                {getEncouragement(countdown.days)}
+                {getEncouragement(countdown.days, userDisplayName)}
               </p>
             </div>
           </div>
@@ -432,8 +474,8 @@ export default function Home() {
                 <p className="marks-subline">Completed total: {subject.completedTotal}/{subject.completedMaxTotal || 0}</p>
                 <div className="marks-chips">
                   {subject.exams.map((exam) => (
-                    <span key={exam.examCode} className={`mark-chip ${exam.mark > 0 ? "done" : "pending"}`}>
-                      {exam.examCode}: {exam.mark}/{exam.maxMark}
+                    <span key={exam.examCode} className={`mark-chip ${exam.result ? "done" : "pending"}`}>
+                      {exam.examCode}: {exam.result ? `${exam.result.score}/${exam.result.maxMark}` : "Pending"}
                     </span>
                   ))}
                 </div>
@@ -513,7 +555,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="card reveal career-card">
+        {/* <section className="card reveal career-card">
           <div>
             <h2>Future Career Loading...</h2>
             <p className="section-subtitle">Every focused day adds momentum to your future.</p>
@@ -522,7 +564,7 @@ export default function Home() {
             <div className="hero-photo-frame">
               <Image
                 src="/ashali.png"
-                alt="Ashali visualized as a future doctor"
+                alt={`${userDisplayName} visualized as a future doctor`}
                 width={620}
                 height={760}
                 priority
@@ -530,13 +572,13 @@ export default function Home() {
                 style={{ borderRadius: "25px" }}
               />
             </div>
-            <figcaption className="hero-photo-caption">Future Dr. Ashalini Murugaverl</figcaption>
+            <figcaption className="hero-photo-caption">Future Doctor</figcaption>
           </figure>
           <div className="career-loader">
             <div className="career-progress" style={{ width: `${careerProgress}%` }} />
           </div>
           <p className="career-percent">{careerProgress}%</p>
-        </section>
+        </section> */}
 
         <div className="mobile-end-spacer" aria-hidden="true" />
       </main>
@@ -690,6 +732,30 @@ export default function Home() {
         .hero-layout {
           display: grid;
           gap: 14px;
+        }
+
+        .hero-topbar {
+          display: flex;
+          justify-content: flex-end;
+          margin-bottom: 6px;
+        }
+
+        .logout-button {
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          background: rgba(255, 255, 255, 0.08);
+          color: #f4f7ff;
+          padding: 10px 16px;
+          border-radius: 999px;
+          font-size: 0.9rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+        }
+
+        .logout-button:hover {
+          transform: translateY(-1px);
+          background: rgba(255, 255, 255, 0.14);
+          border-color: rgba(119, 242, 255, 0.42);
         }
 
         h1 {

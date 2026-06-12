@@ -314,6 +314,8 @@ export default function BiologyMcq() {
           <ExamModule
             config={{
               title: `🧬 உயிரியல் தேர்வு — ${batch.label} (${exam.label})`,
+              subject: "Biology",
+              batchId: batch.id,
               examCode: exam.examCode,
               units: batch.units,
               focus: exam.focus ?? batch.focus,

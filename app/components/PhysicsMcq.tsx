@@ -331,6 +331,8 @@ export default function PhysicsMcq() {
           <ExamModule
             config={{
               title: `🔭 பெளதிகவியல் தேர்வு — ${batch.label} (${exam.label})`,
+              subject: "Physics",
+              batchId: batch.id,
               examCode: exam.examCode,
               units: batch.units,
               focus: exam.focus ?? batch.focus,

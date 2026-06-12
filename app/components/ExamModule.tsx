@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
+import { saveExamResult } from "@/app/lib/study-db";
 
 export type ExamQuestion = {
   id: string;
@@ -13,6 +14,8 @@ export type ExamQuestion = {
 
 export type ExamConfig = {
   title: string;
+  subject: "Biology" | "Physics";
+  batchId: string;
   examCode?: string;
   units: string;
   focus: string;
@@ -37,6 +40,7 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [timeLeft, setTimeLeft] = useState(config.durationSeconds);
   const [timeTaken, setTimeTaken] = useState(0);
+  const hasSavedResultRef = useRef(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -62,6 +66,8 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
   const startExam = () => {
     setTimeLeft(config.durationSeconds);
     setAnswers({});
+    setTimeTaken(0);
+    hasSavedResultRef.current = false;
     setPhase("exam");
   };
 
@@ -77,8 +83,35 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
   const answeredCount = Object.keys(answers).length;
   const score = config.questions.filter((q) => answers[q.id] === q.answer).length;
   const percentage = Math.round((score / config.questions.length) * 100);
+  const effectiveTimeTaken = timeTaken === 0 ? Math.max(0, config.durationSeconds - timeLeft) : timeTaken;
   const isWarning = timeLeft > 0 && timeLeft < 600;
   const isCritical = timeLeft > 0 && timeLeft < 120;
+
+  useEffect(() => {
+    if (phase !== "result" || hasSavedResultRef.current || !config.examCode) return;
+
+    hasSavedResultRef.current = true;
+    void saveExamResult({
+      subject: config.subject,
+      batchId: config.batchId,
+      examCode: config.examCode,
+      score,
+      maxMark: config.questions.length,
+      percentage,
+      answeredCount,
+      timeTakenSeconds: effectiveTimeTaken,
+    });
+  }, [
+    answeredCount,
+    config.batchId,
+    config.examCode,
+    config.questions.length,
+    config.subject,
+    effectiveTimeTaken,
+    percentage,
+    phase,
+    score,
+  ]);
 
   if (typeof document === "undefined") return null;
 
@@ -217,7 +250,7 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
                 <p className="em-score-grade">
                   {percentage >= 75 ? "🎉 சிறந்தது!" : percentage >= 50 ? "👍 நல்லது" : "💪 மேலும் பயிற்சி தேவை"}
                 </p>
-                <p className="em-score-time">நேரம் எடுத்தது: {formatTime(timeTaken)}</p>
+                <p className="em-score-time">நேரம் எடுத்தது: {formatTime(effectiveTimeTaken)}</p>
                 <p className="em-score-correct">
                   சரி: {score} &nbsp;|&nbsp; தவறு: {answeredCount - score} &nbsp;|&nbsp; விடுபட்டவை: {config.questions.length - answeredCount}
                 </p>

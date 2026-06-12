@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/app/lib/auth-context";
+import { fetchRevisionTopics, saveRevisionTopics } from "@/app/lib/study-db";
+import { createClient } from "@/lib/supabase/client";
 import { safeReadStorageJson, safeWriteStorageJson } from "./mcq/utils/storage";
 
 type RevisionTopic = {
@@ -18,7 +21,7 @@ type SpacedRevisionPlannerProps = {
   examStartIso?: string;
 };
 
-const SPACED_REVISION_STORAGE_KEY = "ashali:spaced-revision-topics:v1";
+const SPACED_REVISION_STORAGE_KEY = "spaced-revision-topics:v1";
 const SUBJECT_OPTIONS = ["Biology", "Chemistry", "Physics"] as const;
 type SubjectOption = (typeof SUBJECT_OPTIONS)[number];
 const STEP_OFFSETS_DAYS = [0, 2, 6, 13, 29] as const;
@@ -133,6 +136,8 @@ function getPendingAfterExamCount(topic: RevisionTopic, examStartDate: Date | nu
 }
 
 export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPlannerProps) {
+  const { user } = useAuth();
+  const supabase = useMemo(() => createClient(), []);
   const examStartDate = useMemo(() => {
     if (!examStartIso) return null;
     const parsed = new Date(examStartIso);
@@ -151,10 +156,104 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
   const [topicTitle, setTopicTitle] = useState("");
   const [subject, setSubject] = useState<SubjectOption>("Biology");
   const [studiedOn, setStudiedOn] = useState(formatAsInputDate(new Date()));
+  const [isRemoteReady, setIsRemoteReady] = useState(false);
+  const currentTopicsJsonRef = useRef<string>(JSON.stringify(topics));
+  const lastPersistedTopicsJsonRef = useRef<string>("__none__");
+  const pendingSaveRef = useRef<{ topics: RevisionTopic[]; topicsJson: string } | null>(null);
+  const isSavingRef = useRef(false);
+
+  const applyTopics = useCallback((nextTopics: RevisionTopic[]) => {
+    const nextJson = JSON.stringify(nextTopics);
+    currentTopicsJsonRef.current = nextJson;
+    setTopics(nextTopics);
+  }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadRemoteTopics() {
+      if (!user) {
+        setIsRemoteReady(true);
+        return;
+      }
+
+      const remoteTopics = await fetchRevisionTopics(user.id);
+      if (cancelled) return;
+
+      const normalized = normalizeLoadedTopics(remoteTopics);
+      applyTopics(normalized);
+      lastPersistedTopicsJsonRef.current = JSON.stringify(normalized);
+
+      setIsRemoteReady(true);
+    }
+
+    loadRemoteTopics();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyTopics, user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel(`spaced-revision-${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "spaced_revision_plans",
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          const nextTopics = normalizeLoadedTopics((payload.new as { topics?: unknown } | null)?.topics ?? []);
+          const nextJson = JSON.stringify(nextTopics);
+
+          if (nextJson === currentTopicsJsonRef.current) return;
+
+          currentTopicsJsonRef.current = nextJson;
+          lastPersistedTopicsJsonRef.current = nextJson;
+          setTopics(nextTopics);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [supabase, user]);
+
+  useEffect(() => {
+    if (!isRemoteReady) return;
+
+    const topicsJson = JSON.stringify(topics);
+    currentTopicsJsonRef.current = topicsJson;
     safeWriteStorageJson(SPACED_REVISION_STORAGE_KEY, topics);
-  }, [topics]);
+
+    if (user) {
+      if (topicsJson === lastPersistedTopicsJsonRef.current) return;
+
+      pendingSaveRef.current = { topics, topicsJson };
+      if (isSavingRef.current) return;
+
+      isSavingRef.current = true;
+      void (async () => {
+        while (pendingSaveRef.current) {
+          const next = pendingSaveRef.current;
+          pendingSaveRef.current = null;
+
+          const { error } = await saveRevisionTopics(next.topics);
+          if (!error) {
+            lastPersistedTopicsJsonRef.current = next.topicsJson;
+          }
+        }
+
+        isSavingRef.current = false;
+      })();
+    }
+  }, [topics, isRemoteReady, user]);
 
   const sortedTopics = useMemo(() => {
     const withStatus = topics.map((topic) => ({ topic, info: getTopicStatus(topic) }));
@@ -203,13 +302,13 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
       createdAt: new Date().toISOString()
     };
 
-    setTopics((prev) => [nextTopic, ...prev]);
+    applyTopics([nextTopic, ...topics]);
     setTopicTitle("");
   };
 
   const markNextDone = (id: string) => {
-    setTopics((prev) =>
-      prev.map((topic) => {
+    applyTopics(
+      topics.map((topic) => {
         if (topic.id !== id) return topic;
 
         const nextStepIndex = getNextStepIndex(topic);
@@ -224,8 +323,8 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
   };
 
   const undoLastRevision = (id: string) => {
-    setTopics((prev) =>
-      prev.map((topic) => {
+    applyTopics(
+      topics.map((topic) => {
         if (topic.id !== id) return topic;
 
         const reversible = topic.completedStepIndexes.filter((index) => index > 0);
@@ -243,8 +342,8 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
   const restartPlanFromToday = (id: string) => {
     const today = formatAsInputDate(new Date());
 
-    setTopics((prev) =>
-      prev.map((topic) =>
+    applyTopics(
+      topics.map((topic) =>
         topic.id === id
           ? {
               ...topic,
@@ -257,7 +356,11 @@ export default function SpacedRevisionPlanner({ examStartIso }: SpacedRevisionPl
   };
 
   const removeTopic = (id: string) => {
-    setTopics((prev) => prev.filter((topic) => topic.id !== id));
+    setTopics((prev) => {
+      const next = prev.filter((topic) => topic.id !== id);
+      currentTopicsJsonRef.current = JSON.stringify(next);
+      return next;
+    });
   };
 
   return (
