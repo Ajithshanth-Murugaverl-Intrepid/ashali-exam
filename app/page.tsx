@@ -107,7 +107,7 @@ export default function Home() {
   const [quoteIndex, setQuoteIndex] = useState(2);
   const [challengeIndex, setChallengeIndex] = useState(1);
   const [examResults, setExamResults] = useState<StoredExamResult[]>([]);
-  const [settingsName, setSettingsName] = useState("");
+  const [settingsName, setSettingsName] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -137,7 +137,7 @@ export default function Home() {
     setSettingsError(null);
     setSettingsSuccess(null);
 
-    const nextName = settingsName.trim();
+    const nextName = (settingsName ?? user?.user_metadata?.full_name?.trim() ?? "").trim();
     if (!nextName) {
       setSettingsError("Name cannot be empty.");
       return;
@@ -268,10 +268,6 @@ export default function Home() {
     };
   }, [user]);
 
-  useEffect(() => {
-    setSettingsName(user?.user_metadata?.full_name?.trim() || "");
-  }, [user?.id, user?.user_metadata?.full_name]);
-
   const diff = Math.max(0, examMs - now);
   const totalSeconds = Math.floor(diff / 1000);
 
@@ -301,8 +297,6 @@ export default function Home() {
   const examCompletionProgress = totalExamsCount > 0
     ? Math.round((completedExamsCount / totalExamsCount) * 100)
     : 0;
-
-  const careerProgress = Math.min(100, Math.round(roundedTimelineProgress * 0.94 + 6));
 
   const hourNow = new Date(now).getHours();
   const greeting = getGreeting(hourNow);
@@ -658,7 +652,7 @@ export default function Home() {
               <input
                 id="settings-name"
                 type="text"
-                value={settingsName}
+                value={settingsName ?? user?.user_metadata?.full_name?.trim() ?? ""}
                 onChange={(event) => setSettingsName(event.target.value)}
                 className="settings-input"
                 placeholder="Your full name"
