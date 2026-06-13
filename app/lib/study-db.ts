@@ -70,15 +70,15 @@ export async function fetchExamResults(userId: string): Promise<StoredExamResult
   }));
 }
 
-export async function saveExamResult(input: Omit<StoredExamResult, "completedAt"> & { completedAt?: string }) {
+export async function saveExamResult(input: Omit<StoredExamResult, "completedAt"> & { completedAt?: string }): Promise<{ error: string | null }> {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return;
+  if (!user) return { error: "Not authenticated" };
 
-  await supabase.from("exam_results").upsert(
+  const { error } = await supabase.from("exam_results").upsert(
     {
       user_id: user.id,
       subject: input.subject,
@@ -94,9 +94,24 @@ export async function saveExamResult(input: Omit<StoredExamResult, "completedAt"
     { onConflict: "user_id,exam_code" }
   );
 
+  if (error) {
+    console.error("saveExamResult failed", {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+      examCode: input.examCode,
+      subject: input.subject,
+      batchId: input.batchId,
+    });
+    return { error: error.message };
+  }
+
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event(EXAM_RESULTS_UPDATED_EVENT));
   }
+
+  return { error: null };
 }
 
 export async function fetchSubjectProgress(userId: string) {

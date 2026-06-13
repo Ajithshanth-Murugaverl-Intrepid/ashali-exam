@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import { saveExamResult } from "@/app/lib/study-db";
+import { EXAM_CATALOG } from "@/app/lib/study-data";
+import { saveExamResult, syncExamCatalog } from "@/app/lib/study-db";
 
 export type ExamQuestion = {
   id: string;
@@ -89,18 +90,28 @@ export default function ExamModule({ config, onClose }: { config: ExamConfig; on
 
   useEffect(() => {
     if (phase !== "result" || hasSavedResultRef.current || !config.examCode) return;
+    const examCode = config.examCode;
 
     hasSavedResultRef.current = true;
-    void saveExamResult({
-      subject: config.subject,
-      batchId: config.batchId,
-      examCode: config.examCode,
-      score,
-      maxMark: config.questions.length,
-      percentage,
-      answeredCount,
-      timeTakenSeconds: effectiveTimeTaken,
-    });
+    void (async () => {
+      // After a full DB wipe, exam_catalog may be empty; ensure FK target exists before saving.
+      await syncExamCatalog(EXAM_CATALOG);
+
+      const { error } = await saveExamResult({
+        subject: config.subject,
+        batchId: config.batchId,
+        examCode,
+        score,
+        maxMark: config.questions.length,
+        percentage,
+        answeredCount,
+        timeTakenSeconds: effectiveTimeTaken,
+      });
+
+      if (error) {
+        console.error("Exam result save failed", { examCode, error });
+      }
+    })();
   }, [
     answeredCount,
     config.batchId,

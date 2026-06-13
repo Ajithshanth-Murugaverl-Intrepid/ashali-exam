@@ -31,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
 
 const SYNCABLE_KEYS = [
   "biology-random-game-v1",
+  "chemistry-random-game-v1",
   "physics-random-game-v1",
 ];
 
