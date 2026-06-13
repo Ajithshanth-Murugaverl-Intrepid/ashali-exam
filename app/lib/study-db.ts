@@ -24,6 +24,7 @@ export type StoredRevisionTopic = {
 
 const SUBJECT_PROGRESS_KEYS: Record<string, StudySubject> = {
   "biology-random-game-v1": "Biology",
+  "chemistry-random-game-v1": "Chemistry",
   "physics-random-game-v1": "Physics",
 };
 
@@ -130,6 +131,44 @@ export async function saveSubjectProgress(storageKey: string, payload: unknown) 
     },
     { onConflict: "user_id,storage_key" }
   );
+}
+
+export async function clearExamResultsBySubject(subject: StudySubject): Promise<{ error: string | null }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Not authenticated" };
+
+  const { error } = await supabase
+    .from("exam_results")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("subject", subject);
+
+  if (!error && typeof window !== "undefined") {
+    window.dispatchEvent(new Event(EXAM_RESULTS_UPDATED_EVENT));
+  }
+
+  return { error: error?.message ?? null };
+}
+
+export async function clearSubjectProgressBySubject(subject: StudySubject): Promise<{ error: string | null }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Not authenticated" };
+
+  const { error } = await supabase
+    .from("subject_progress")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("subject", subject);
+
+  return { error: error?.message ?? null };
 }
 
 export async function fetchRevisionTopics(userId: string): Promise<StoredRevisionTopic[]> {

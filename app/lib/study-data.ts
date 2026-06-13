@@ -1,7 +1,8 @@
 import { BIOLOGY_BATCHES } from "@/app/components/biology/data";
+import { CHEMISTRY_BATCHES } from "@/app/components/chemistry/data";
 import { PHYSICS_BATCHES } from "@/app/components/physics/data";
 
-export type StudySubject = "Biology" | "Physics";
+export type StudySubject = "Biology" | "Chemistry" | "Physics";
 
 export type ExamCatalogEntry = {
   subject: StudySubject;
@@ -19,6 +20,19 @@ export const EXAM_CATALOG: ExamCatalogEntry[] = [
   ...BIOLOGY_BATCHES.flatMap((batch) =>
     batch.exams.map((exam) => ({
       subject: "Biology" as const,
+      batchId: batch.id,
+      examCode: exam.examCode,
+      label: exam.label,
+      units: batch.units,
+      focus: exam.focus ?? batch.focus,
+      target: exam.target,
+      durationSeconds: exam.durationSeconds,
+      questionCount: exam.examQuestions.length,
+    }))
+  ),
+  ...CHEMISTRY_BATCHES.flatMap((batch) =>
+    batch.exams.map((exam) => ({
+      subject: "Chemistry" as const,
       batchId: batch.id,
       examCode: exam.examCode,
       label: exam.label,

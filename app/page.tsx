@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+// import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -10,8 +10,10 @@ import {
   EXAM_RESULTS_UPDATED_EVENT,
   fetchExamResults,
   syncExamCatalog,
+  clearExamResultsBySubject,
   type StoredExamResult
 } from "./lib/study-db";
+import type { StudySubject } from "./lib/study-data";
 import { useAuth } from "./lib/auth-context";
 import BiologyMcq from "./components/BiologyMcq";
 import ChemistryMcq from "./components/ChemistryMcq";
@@ -113,6 +115,11 @@ export default function Home() {
   const [settingsSuccess, setSettingsSuccess] = useState<string | null>(null);
   const [nameSaving, setNameSaving] = useState(false);
   const [passwordSaving, setPasswordSaving] = useState(false);
+  const [resetStatus, setResetStatus] = useState<Record<StudySubject, "idle" | "confirming" | "clearing" | "done">>({
+    Biology: "idle",
+    Chemistry: "idle",
+    Physics: "idle",
+  });
 
   const userDisplayName =
     user?.user_metadata?.full_name?.trim() ||
@@ -148,6 +155,20 @@ export default function Home() {
     }
 
     setNameSaving(false);
+  }
+
+  async function handleClearSubject(subject: StudySubject) {
+    const cur = resetStatus[subject];
+    if (cur === "idle") {
+      setResetStatus((prev) => ({ ...prev, [subject]: "confirming" }));
+      return;
+    }
+    if (cur === "confirming") {
+      setResetStatus((prev) => ({ ...prev, [subject]: "clearing" }));
+      await clearExamResultsBySubject(subject);
+      setResetStatus((prev) => ({ ...prev, [subject]: "done" }));
+      setTimeout(() => setResetStatus((prev) => ({ ...prev, [subject]: "idle" })), 3000);
+    }
   }
 
   async function handlePasswordUpdate(event: React.FormEvent<HTMLFormElement>) {
@@ -693,6 +714,49 @@ export default function Home() {
 
           {settingsError && <p className="settings-message error">{settingsError}</p>}
           {settingsSuccess && <p className="settings-message success">{settingsSuccess}</p>}
+
+          <div className="reset-section">
+            <p className="reset-section-title">🗑️ Reset Exam Marks</p>
+            <p className="reset-section-sub">Permanently deletes all saved exam scores for a single subject from the database. Game streaks and progress are kept. This cannot be undone.</p>
+            <div className="reset-grid">
+              {(["Physics", "Biology", "Chemistry"] as StudySubject[]).map((subject) => {
+                const st = resetStatus[subject];
+                return (
+                  <div key={subject} className="reset-subject-card">
+                    <p className="reset-subject-name">
+                      {subject === "Biology" ? "🧬" : subject === "Chemistry" ? "⚗️" : "🔭"} {subject}
+                    </p>
+                    {st === "confirming" && (
+                      <p className="reset-confirm-text">⚠️ This will permanently delete all {subject} exam results and game progress. Click again to confirm.</p>
+                    )}
+                    {st === "done" && (
+                      <p className="reset-done-text">✅ {subject} data cleared.</p>
+                    )}
+                    <button
+                      type="button"
+                      className={`reset-btn ${st === "confirming" ? "reset-btn-confirm" : st === "done" ? "reset-btn-done" : ""}`}
+                      disabled={st === "clearing" || st === "done"}
+                      onClick={() => void handleClearSubject(subject)}
+                    >
+                      {st === "idle" && "Clear Data"}
+                      {st === "confirming" && "Confirm Clear"}
+                      {st === "clearing" && "Clearing..."}
+                      {st === "done" && "Cleared ✓"}
+                    </button>
+                    {st === "confirming" && (
+                      <button
+                        type="button"
+                        className="reset-btn-cancel"
+                        onClick={() => setResetStatus((prev) => ({ ...prev, [subject]: "idle" }))}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </section>
 
         {/* <section className="card reveal career-card">
@@ -1317,6 +1381,121 @@ export default function Home() {
           color: #dcfce7;
           background: rgba(34, 197, 94, 0.16);
           border-color: rgba(134, 239, 172, 0.4);
+        }
+
+        .reset-section {
+          margin-top: 20px;
+          padding-top: 18px;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .reset-section-title {
+          margin: 0;
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: #f3f2ff;
+        }
+
+        .reset-section-sub {
+          margin: 0;
+          font-size: 0.82rem;
+          color: #9ca3b8;
+          line-height: 1.5;
+        }
+
+        .reset-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 12px;
+        }
+
+        .reset-subject-card {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 14px;
+          padding: 14px 14px 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .reset-subject-name {
+          margin: 0;
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: #e2e0ff;
+        }
+
+        .reset-confirm-text {
+          margin: 0;
+          font-size: 0.78rem;
+          color: #fbbf24;
+          line-height: 1.4;
+        }
+
+        .reset-done-text {
+          margin: 0;
+          font-size: 0.78rem;
+          color: #86efac;
+        }
+
+        .reset-btn {
+          padding: 7px 14px;
+          border-radius: 8px;
+          font-size: 0.82rem;
+          font-weight: 600;
+          cursor: pointer;
+          border: 1px solid rgba(244, 63, 94, 0.45);
+          background: rgba(244, 63, 94, 0.12);
+          color: #fca5a5;
+          transition: background 0.15s, border-color 0.15s;
+        }
+
+        .reset-btn:hover:not(:disabled) {
+          background: rgba(244, 63, 94, 0.22);
+          border-color: rgba(244, 63, 94, 0.7);
+        }
+
+        .reset-btn:disabled {
+          opacity: 0.55;
+          cursor: not-allowed;
+        }
+
+        .reset-btn-confirm {
+          border-color: rgba(251, 191, 36, 0.6);
+          background: rgba(251, 191, 36, 0.12);
+          color: #fde68a;
+        }
+
+        .reset-btn-confirm:hover:not(:disabled) {
+          background: rgba(251, 191, 36, 0.22);
+          border-color: rgba(251, 191, 36, 0.8);
+        }
+
+        .reset-btn-done {
+          border-color: rgba(34, 197, 94, 0.4);
+          background: rgba(34, 197, 94, 0.1);
+          color: #86efac;
+        }
+
+        .reset-btn-cancel {
+          padding: 5px 12px;
+          border-radius: 8px;
+          font-size: 0.78rem;
+          font-weight: 600;
+          cursor: pointer;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          background: transparent;
+          color: #9ca3b8;
+          transition: color 0.15s, border-color 0.15s;
+        }
+
+        .reset-btn-cancel:hover {
+          color: #e2e0ff;
+          border-color: rgba(255, 255, 255, 0.3);
         }
 
         .marks-grid {

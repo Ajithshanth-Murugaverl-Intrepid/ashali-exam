@@ -14,7 +14,7 @@ export type ExamQuestion = {
 
 export type ExamConfig = {
   title: string;
-  subject: "Biology" | "Physics";
+  subject: "Biology" | "Chemistry" | "Physics";
   batchId: string;
   examCode?: string;
   units: string;
